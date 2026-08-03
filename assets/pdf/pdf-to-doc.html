@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF to DOC - JNToolkits</title>
+  <meta name="description" content="Convert PDF text to a Word-compatible DOCX file for free in your browser." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> PDF text to Word</span>
+            <h1>Convert PDF to <span class="gradient-text">DOCX.</span></h1>
+            <p>Extract selectable text from a PDF and download it as a Word-compatible DOCX file. This browser tool works best with text-based PDFs; scanned image PDFs need OCR.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ DOCX output</span>
+              <span class="badge">✓ Text extraction</span>
+              <span class="badge">✓ No server upload</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">📝</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="dropzone" id="dropzone">
+            <input class="file-input" id="fileInput" type="file" accept="application/pdf,.pdf" />
+            <div>
+              <div class="upload-icon">＋</div>
+              <h2>Select one PDF file</h2>
+              <p>Drag and drop a PDF here, or choose a file. The tool will extract selectable text and create a Word-compatible DOCX file.</p>
+              <div class="button-row">
+                <button class="btn btn-primary" id="chooseBtn" type="button">Choose PDF File</button>
+                <button class="btn btn-soft" id="clearBtn" type="button" disabled>Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-head">
+            <div>
+              <h2>Selected file</h2>
+              <span>One PDF required.</span>
+            </div>
+          </div>
+
+          <div class="file-list" id="fileList">
+            <div class="empty-list">No PDF selected yet.</div>
+          </div>
+
+          <div class="form-card">
+            <h2>DOCX options</h2>
+            <p>Choose how the text should be organized in the Word document.</p>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="checkbox" id="includePageTitles" checked />
+                <span><strong>Add page headings</strong><span>Adds “Page 1”, “Page 2”, etc. before each page’s text.</span></span>
+              </label>
+              <label class="radio-card">
+                <input type="checkbox" id="includePageBreaks" checked />
+                <span><strong>Add page breaks</strong><span>Starts each PDF page on a new Word page.</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h2>Extracted text preview</h2>
+            <p>After conversion, the extracted text appears here before/after download.</p>
+            <div class="doc-preview" id="textPreview"></div>
+          </div>
+
+          <div class="progress-wrap" id="progressWrap" aria-live="polite">
+            <div class="progress-label">
+              <span id="progressText">Preparing...</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+
+          <div class="message" id="messageBox"></div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>Convert summary</h2>
+            <p>Extract text from PDF and create a Word-compatible DOCX document.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="pageCount">0</strong><span>Total pages</span></div>
+              <div class="summary-box"><strong id="textCount">0</strong><span>Characters</span></div>
+            </div>
+            <div class="summary">
+              <div class="summary-box"><strong id="fileSize">0 B</strong><span>File size</span></div>
+              <div class="summary-box"><strong id="outputType">DOCX</strong><span>Output</span></div>
+            </div>
+            <div class="action-stack">
+              <button class="btn btn-primary" id="convertBtn" type="button" disabled>Convert to DOCX</button>
+              <button class="btn btn-soft" id="downloadAgainBtn" type="button" disabled>Download Again</button>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>Best for.</b> Text-based PDFs with selectable text.</div>
+              <div class="tip"><b>Scanned PDFs.</b> Image-only PDFs need OCR, which is not included here.</div>
+              <div class="tip"><b>Formatting.</b> The tool focuses on text extraction, not exact layout cloning.</div>
+            </div>
+          </div>
+
+          <div class="side-card"><h2>Privacy note</h2><p>Your PDF is processed locally in the browser and is not uploaded to a server.</p></div>
+          <div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — PDF to DOC Tool.</span>
+      <span>Browser-based • Free • No signup</span>
+    </div>
+  </footer>
+
+  <script src="../js/pdfjs.min.js"></script>
+  <script src="../js/jszip.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const chooseBtn = document.getElementById('chooseBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const convertBtn = document.getElementById('convertBtn');
+    const downloadAgainBtn = document.getElementById('downloadAgainBtn');
+    const dropzone = document.getElementById('dropzone');
+    const fileList = document.getElementById('fileList');
+    const includePageTitles = document.getElementById('includePageTitles');
+    const includePageBreaks = document.getElementById('includePageBreaks');
+    const textPreview = document.getElementById('textPreview');
+    const pageCount = document.getElementById('pageCount');
+    const textCount = document.getElementById('textCount');
+    const fileSize = document.getElementById('fileSize');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const messageBox = document.getElementById('messageBox');
+
+    let pdfFile = null;
+    let extractedPages = [];
+    let lastBlobUrl = null;
+    let lastFileName = 'converted-document.docx';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function fileBaseName(fileName, fallback = 'file') {
+      return (fileName || fallback)
+        .split(/[\/]/).pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\/:*?"<>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() || fallback;
+    }
+
+    function outputFileName(fileName, suffix, extension) {
+      return `${fileBaseName(fileName)}-${suffix}.${extension}`;
+    }
+    if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = '../js/pdfjs.worker.min.js';
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    }
+
+    function escapeXml(text) {
+      return String(text).replace(/[<>&"']/g, char => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[char]));
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      const value = bytes / Math.pow(1024, index);
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function hideMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message';
+    }
+
+    function setProgress(percent, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressWrap.style.display = 'block';
+      progressBar.style.width = `${safePercent}%`;
+      progressPercent.textContent = `${safePercent}%`;
+      progressText.textContent = text;
+    }
+
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+    }
+
+    function resetDownload() {
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+      lastBlobUrl = null;
+      downloadAgainBtn.disabled = true;
+    }
+
+    function updateSummary() {
+      const charCount = extractedPages.join('\n').length;
+      pageCount.textContent = pdfFile ? pdfFile.pages : 0;
+      textCount.textContent = charCount;
+      fileSize.textContent = pdfFile ? formatBytes(pdfFile.size) : '0 B';
+      clearBtn.disabled = !pdfFile;
+      convertBtn.disabled = !pdfFile;
+    }
+
+    function renderFile() {
+      if (!pdfFile) {
+        fileList.innerHTML = '<div class="empty-list">No PDF selected yet.</div>';
+        updateSummary();
+        return;
+      }
+
+      fileList.innerHTML = `
+        <div class="file-item">
+          <div class="file-icon">PDF</div>
+          <div>
+            <div class="file-name">${escapeHtml(pdfFile.name)}</div>
+            <div class="file-meta"><span class="meta-pill">✓ ${pdfFile.pages} page${pdfFile.pages === 1 ? '' : 's'}</span><span class="meta-pill">${formatBytes(pdfFile.size)}</span></div>
+          </div>
+          <div class="file-actions"><button class="icon-btn remove" type="button" id="removeFileBtn" aria-label="Remove file">×</button></div>
+        </div>`;
+      document.getElementById('removeFileBtn').addEventListener('click', clearFile);
+      updateSummary();
+    }
+
+    async function loadFile(file) {
+      hideMessage();
+      hideProgress();
+      resetDownload();
+      extractedPages = [];
+      textPreview.textContent = '';
+
+      if (!file || (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf'))) {
+        showMessage('Please select a valid PDF file.', 'error');
+        return;
+      }
+
+      try {
+        setProgress(15, 'Reading PDF...');
+        const bytes = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(bytes.slice(0)) });
+        const pdf = await loadingTask.promise;
+        pdfFile = { name: file.name, size: file.size, bytes, pages: pdf.numPages };
+        setProgress(100, 'PDF loaded.');
+        renderFile();
+        showMessage('PDF loaded successfully. Click Convert to DOCX to extract text.', 'success');
+        setTimeout(hideProgress, 700);
+      } catch (error) {
+        console.error(error);
+        pdfFile = null;
+        renderFile();
+        hideProgress();
+        showMessage('Could not read this PDF. It may be damaged, password-protected, or unsupported.', 'error');
+      }
+    }
+
+    function clearFile() {
+      pdfFile = null;
+      extractedPages = [];
+      fileInput.value = '';
+      textPreview.textContent = '';
+      resetDownload();
+      hideMessage();
+      hideProgress();
+      renderFile();
+    }
+
+    function groupTextItems(items) {
+      const rows = [];
+      items
+        .filter(item => item.str && item.str.trim())
+        .map(item => ({ text: item.str.trim(), x: item.transform[4], y: item.transform[5] }))
+        .sort((a, b) => Math.abs(b.y - a.y) > 4 ? b.y - a.y : a.x - b.x)
+        .forEach(item => {
+          let row = rows.find(existing => Math.abs(existing.y - item.y) < 4);
+          if (!row) {
+            row = { y: item.y, items: [] };
+            rows.push(row);
+          }
+          row.items.push(item);
+        });
+
+      return rows
+        .sort((a, b) => b.y - a.y)
+        .map(row => row.items.sort((a, b) => a.x - b.x).map(item => item.text).join(' ').replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+    }
+
+    async function extractTextPages() {
+      const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(pdfFile.bytes.slice(0)) });
+      const pdf = await loadingTask.promise;
+      const pages = [];
+
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        setProgress(10 + (pageNumber / pdf.numPages) * 68, `Extracting text from page ${pageNumber} of ${pdf.numPages}...`);
+        const page = await pdf.getPage(pageNumber);
+        const textContent = await page.getTextContent();
+        const lines = groupTextItems(textContent.items);
+        pages.push(lines.join('\n'));
+      }
+
+      return pages;
+    }
+
+    function paragraphXml(text, bold = false) {
+      const safeText = escapeXml(text || ' ');
+      const boldXml = bold ? '<w:rPr><w:b/></w:rPr>' : '';
+      return `<w:p><w:r>${boldXml}<w:t xml:space="preserve">${safeText}</w:t></w:r></w:p>`;
+    }
+
+    function pageBreakXml() {
+      return '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+    }
+
+    function buildDocumentXml(pages) {
+      const parts = [];
+      pages.forEach((pageText, index) => {
+        if (includePageTitles.checked) parts.push(paragraphXml(`Page ${index + 1}`, true));
+        const lines = pageText.split('\n').filter(line => line.trim());
+        if (lines.length) {
+          lines.forEach(line => parts.push(paragraphXml(line)));
+        } else {
+          parts.push(paragraphXml('[No selectable text found on this page]'));
+        }
+        if (includePageBreaks.checked && index < pages.length - 1) parts.push(pageBreakXml());
+      });
+
+      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" mc:Ignorable="w14 wp14"><w:body>${parts.join('')}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+    }
+
+    async function createDocxBlob(pages) {
+      const zip = new JSZip();
+      zip.file('[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`);
+      zip.folder('_rels').file('.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+      zip.folder('word').file('document.xml', buildDocumentXml(pages));
+      zip.folder('word').file('styles.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style></w:styles>`);
+      zip.folder('word').folder('_rels').file('document.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`);
+      return zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    }
+
+    async function convertToDocx() {
+      hideMessage();
+      resetDownload();
+      if (!pdfFile) {
+        showMessage('Please select a PDF first.', 'error');
+        return;
+      }
+
+      try {
+        convertBtn.disabled = true;
+        setProgress(8, 'Starting text extraction...');
+        extractedPages = await extractTextPages();
+        const previewText = extractedPages.map((page, index) => `--- Page ${index + 1} ---\n${page || '[No selectable text found]'}`).join('\n\n');
+        textPreview.textContent = previewText;
+        updateSummary();
+
+        const allText = extractedPages.join('').trim();
+        if (!allText) {
+          showMessage('No selectable text was found. This may be a scanned/image PDF and needs OCR.', 'error');
+        }
+
+        setProgress(84, 'Building DOCX file...');
+        const blob = await createDocxBlob(extractedPages);
+        lastBlobUrl = URL.createObjectURL(blob);
+        const baseName = fileBaseName(pdfFile.name, 'converted-document');
+        lastFileName = `${baseName}.docx`;
+        downloadBlob(lastBlobUrl, lastFileName);
+        downloadAgainBtn.disabled = false;
+        setProgress(100, 'Done! Download starting...');
+        if (allText) showMessage('Success! Your PDF text has been converted to a DOCX file.', 'success');
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to convert this PDF to DOCX. Please try another text-based PDF.', 'error');
+      } finally {
+        setTimeout(hideProgress, 900);
+        updateSummary();
+      }
+    }
+
+    function downloadBlob(url, fileName) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => {
+      loadFile(event.target.files[0]);
+      fileInput.value = '';
+    });
+    clearBtn.addEventListener('click', clearFile);
+    convertBtn.addEventListener('click', convertToDocx);
+    downloadAgainBtn.addEventListener('click', () => { if (lastBlobUrl) downloadBlob(lastBlobUrl, lastFileName); });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+    window.addEventListener('beforeunload', () => { if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl); });
+
+    renderFile();
+  </script>
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPG to PDF - JNToolkits</title>
+  <meta name="description" content="Convert JPG, PNG, and WebP images to a PDF file for free in your browser." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> Image to PDF converter</span>
+            <h1>Convert JPG images <span class="gradient-text">to PDF.</span></h1>
+            <p>Upload JPG, PNG, or WebP images, arrange their order, choose page size, and download one PDF. Your images are processed locally in this browser.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ Multiple images</span>
+              <span class="badge">✓ Reorder images</span>
+              <span class="badge">✓ No server upload</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">🖼️</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="dropzone" id="dropzone">
+            <input class="file-input" id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+            <div>
+              <div class="upload-icon">＋</div>
+              <h2>Select image files</h2>
+              <p>Drag and drop JPG, PNG, or WebP files here, or click the button below. The final PDF will follow the image order shown below.</p>
+              <div class="button-row">
+                <button class="btn btn-primary" id="chooseBtn" type="button">Choose Images</button>
+                <button class="btn btn-soft" id="addMoreBtn" type="button">Add More</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h2>PDF settings</h2>
+            <p>Choose page size, margin, and image quality before converting.</p>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="pageSizeSelect">Page size</label>
+                <select class="select" id="pageSizeSelect">
+                  <option value="a4p">A4 Portrait</option>
+                  <option value="a4l">A4 Landscape</option>
+                  <option value="letterp">Letter Portrait</option>
+                  <option value="letterl">Letter Landscape</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="marginSelect">Margin</label>
+                <select class="select" id="marginSelect">
+                  <option value="0">No margin</option>
+                  <option value="18" selected>Small margin</option>
+                  <option value="36">Medium margin</option>
+                  <option value="54">Large margin</option>
+                </select>
+              </div>
+              <div class="form-field full">
+                <label for="qualitySelect">Image quality</label>
+                <select class="select" id="qualitySelect">
+                  <option value="0.95" selected>High quality</option>
+                  <option value="0.82">Balanced</option>
+                  <option value="0.68">Smaller file</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-head">
+            <div>
+              <h2>Selected images</h2>
+              <span>PDF page order is left to right, top to bottom.</span>
+            </div>
+            <button class="btn btn-danger" id="clearBtn" type="button" disabled>Clear All</button>
+          </div>
+
+          <div class="image-grid" id="imageGrid">
+            <div class="empty-list">No image selected yet.</div>
+          </div>
+
+          <div class="progress-wrap" id="progressWrap" aria-live="polite">
+            <div class="progress-label">
+              <span id="progressText">Preparing...</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+
+          <div class="message" id="messageBox"></div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>PDF summary</h2>
+            <p>Add one or more images to create a PDF document.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="imageCount">0</strong><span>Images</span></div>
+              <div class="summary-box"><strong id="totalSize">0 B</strong><span>Total size</span></div>
+            </div>
+            <div class="action-stack">
+              <button class="btn btn-primary" id="convertBtn" type="button" disabled>Convert to PDF</button>
+              <button class="btn btn-soft" id="downloadAgainBtn" type="button" disabled>Download Again</button>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>1.</b> Select JPG, PNG, or WebP images.</div>
+              <div class="tip"><b>2.</b> Use arrows to arrange image order.</div>
+              <div class="tip"><b>3.</b> Convert and download one PDF.</div>
+            </div>
+          </div>
+
+          <div class="side-card"><h2>Privacy note</h2><p>Your images are converted locally in your browser and are not uploaded to a server.</p></div>
+          <div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — JPG to PDF Tool.</span>
+      <span>Browser-based • Free • No signup</span>
+    </div>
+  </footer>
+
+  <script src="../js/pdf-lib.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const chooseBtn = document.getElementById('chooseBtn');
+    const addMoreBtn = document.getElementById('addMoreBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const convertBtn = document.getElementById('convertBtn');
+    const downloadAgainBtn = document.getElementById('downloadAgainBtn');
+    const dropzone = document.getElementById('dropzone');
+    const imageGrid = document.getElementById('imageGrid');
+    const imageCount = document.getElementById('imageCount');
+    const totalSize = document.getElementById('totalSize');
+    const pageSizeSelect = document.getElementById('pageSizeSelect');
+    const marginSelect = document.getElementById('marginSelect');
+    const qualitySelect = document.getElementById('qualitySelect');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const messageBox = document.getElementById('messageBox');
+
+    let images = [];
+    let lastBlobUrl = null;
+    let lastFileName = 'images-to-pdf.pdf';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function fileBaseName(fileName, fallback = 'file') {
+      return (fileName || fallback)
+        .split(/[\/]/).pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\/:*?"<>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() || fallback;
+    }
+
+    function outputFileName(fileName, suffix, extension) {
+      return `${fileBaseName(fileName)}-${suffix}.${extension}`;
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      const value = bytes / Math.pow(1024, index);
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function hideMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message';
+    }
+
+    function setProgress(percent, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressWrap.style.display = 'block';
+      progressBar.style.width = `${safePercent}%`;
+      progressPercent.textContent = `${safePercent}%`;
+      progressText.textContent = text;
+    }
+
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+    }
+
+    function resetDownload() {
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+      lastBlobUrl = null;
+      downloadAgainBtn.disabled = true;
+    }
+
+    function updateSummary() {
+      imageCount.textContent = images.length;
+      totalSize.textContent = formatBytes(images.reduce((sum, item) => sum + item.size, 0));
+      clearBtn.disabled = images.length === 0;
+      convertBtn.disabled = images.length === 0;
+    }
+
+    function renderImages() {
+      if (images.length === 0) {
+        imageGrid.innerHTML = '<div class="empty-list">No image selected yet.</div>';
+        updateSummary();
+        return;
+      }
+
+      imageGrid.innerHTML = images.map((item, index) => `
+        <div class="image-card" data-id="${item.id}">
+          <div class="image-preview"><img src="${item.previewUrl}" alt="Preview of ${escapeHtml(item.name)}" /></div>
+          <div class="image-info"><strong>${index + 1}. ${escapeHtml(item.name)}</strong><span>${formatBytes(item.size)}</span></div>
+          <div class="image-actions">
+            <button class="icon-btn" type="button" data-action="up" data-id="${item.id}" ${index === 0 ? 'disabled' : ''} title="Move up">↑</button>
+            <button class="icon-btn" type="button" data-action="down" data-id="${item.id}" ${index === images.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+            <button class="icon-btn remove" type="button" data-action="remove" data-id="${item.id}" title="Remove image">×</button>
+          </div>
+        </div>
+      `).join('');
+
+      updateSummary();
+    }
+
+    function addFiles(fileListObject) {
+      hideMessage();
+      hideProgress();
+      resetDownload();
+      const files = Array.from(fileListObject || []).filter(file => /image\/(jpeg|png|webp)/i.test(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name));
+
+      if (files.length === 0) {
+        showMessage('Please select JPG, PNG, or WebP image files.', 'error');
+        return;
+      }
+
+      files.forEach(file => {
+        images.push({
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          file,
+          name: file.name,
+          size: file.size,
+          previewUrl: URL.createObjectURL(file)
+        });
+      });
+
+      renderImages();
+      showMessage(`${files.length} image${files.length === 1 ? '' : 's'} added. Arrange the order and convert to PDF.`, 'success');
+    }
+
+    function moveImage(id, direction) {
+      const index = images.findIndex(item => item.id === id);
+      const newIndex = index + direction;
+      if (index < 0 || newIndex < 0 || newIndex >= images.length) return;
+      const [item] = images.splice(index, 1);
+      images.splice(newIndex, 0, item);
+      resetDownload();
+      renderImages();
+      hideMessage();
+    }
+
+    function removeImage(id) {
+      const item = images.find(image => image.id === id);
+      if (item) URL.revokeObjectURL(item.previewUrl);
+      images = images.filter(image => image.id !== id);
+      resetDownload();
+      renderImages();
+      hideMessage();
+    }
+
+    function clearImages() {
+      images.forEach(item => URL.revokeObjectURL(item.previewUrl));
+      images = [];
+      resetDownload();
+      hideMessage();
+      hideProgress();
+      renderImages();
+    }
+
+    function getPageSize() {
+      const sizes = {
+        a4p: [595.28, 841.89],
+        a4l: [841.89, 595.28],
+        letterp: [612, 792],
+        letterl: [792, 612]
+      };
+      return sizes[pageSizeSelect.value] || sizes.a4p;
+    }
+
+    function loadImage(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Unable to load image.'));
+        img.src = url;
+      });
+    }
+
+    function dataUrlToUint8Array(dataUrl) {
+      const base64 = dataUrl.split(',')[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    async function imageFileToJpegBytes(item, quality) {
+      const img = await loadImage(item.previewUrl);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const context = canvas.getContext('2d', { alpha: false });
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(img, 0, 0, canvas.width, canvas.height);
+      return {
+        bytes: dataUrlToUint8Array(canvas.toDataURL('image/jpeg', quality)),
+        width: canvas.width,
+        height: canvas.height
+      };
+    }
+
+    async function convertToPdf() {
+      hideMessage();
+      resetDownload();
+      if (images.length === 0) {
+        showMessage('Please add at least one image first.', 'error');
+        return;
+      }
+
+      try {
+        convertBtn.disabled = true;
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        const [pageWidth, pageHeight] = getPageSize();
+        const margin = Number(marginSelect.value);
+        const quality = Number(qualitySelect.value);
+        const maxWidth = Math.max(1, pageWidth - margin * 2);
+        const maxHeight = Math.max(1, pageHeight - margin * 2);
+
+        for (let i = 0; i < images.length; i++) {
+          setProgress(8 + (i / images.length) * 78, `Adding image ${i + 1} of ${images.length}...`);
+          const imageData = await imageFileToJpegBytes(images[i], quality);
+          const embeddedImage = await pdfDoc.embedJpg(imageData.bytes);
+          const page = pdfDoc.addPage([pageWidth, pageHeight]);
+          const scale = Math.min(maxWidth / imageData.width, maxHeight / imageData.height);
+          const drawWidth = imageData.width * scale;
+          const drawHeight = imageData.height * scale;
+          page.drawImage(embeddedImage, {
+            x: (pageWidth - drawWidth) / 2,
+            y: (pageHeight - drawHeight) / 2,
+            width: drawWidth,
+            height: drawHeight
+          });
+        }
+
+        setProgress(92, 'Saving PDF...');
+        const pdfBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+        lastBlobUrl = URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }));
+        const baseName = fileBaseName(images[0]?.name, 'images');
+        lastFileName = images.length === 1 ? `${baseName}.pdf` : `${baseName}-images-to-pdf.pdf`;
+        downloadBlob(lastBlobUrl, lastFileName);
+        downloadAgainBtn.disabled = false;
+        setProgress(100, 'Done! Download starting...');
+        showMessage(`Success! Created a PDF with ${images.length} image page${images.length === 1 ? '' : 's'}.`, 'success');
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to convert these images. Please try JPG, PNG, or WebP files.', 'error');
+      } finally {
+        setTimeout(hideProgress, 900);
+        updateSummary();
+      }
+    }
+
+    function downloadBlob(url, fileName) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    addMoreBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => {
+      addFiles(event.target.files);
+      fileInput.value = '';
+    });
+    clearBtn.addEventListener('click', clearImages);
+    convertBtn.addEventListener('click', convertToPdf);
+    downloadAgainBtn.addEventListener('click', () => { if (lastBlobUrl) downloadBlob(lastBlobUrl, lastFileName); });
+
+    imageGrid.addEventListener('click', event => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      if (button.dataset.action === 'up') moveImage(button.dataset.id, -1);
+      if (button.dataset.action === 'down') moveImage(button.dataset.id, 1);
+      if (button.dataset.action === 'remove') removeImage(button.dataset.id);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', event => addFiles(event.dataTransfer.files));
+    window.addEventListener('beforeunload', () => {
+      images.forEach(item => URL.revokeObjectURL(item.previewUrl));
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+    });
+
+    renderImages();
+  </script>
+</body>
+</html>

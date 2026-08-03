@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compress PDF - JNToolkits</title>
+  <meta name="description" content="Compress and optimize PDF files online for free in your browser." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> Browser-based optimizer</span>
+            <h1>Compress PDF files <span class="gradient-text">for sharing.</span></h1>
+            <p>Optimize a PDF by rebuilding it with clean object streams. This works best for PDFs with unused data; scanned image PDFs may not reduce much without lowering image quality.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ Local processing</span>
+              <span class="badge">✓ Size comparison</span>
+              <span class="badge">✓ No signup</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">🗜️</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="dropzone" id="dropzone">
+            <input class="file-input" id="fileInput" type="file" accept="application/pdf,.pdf" />
+            <div>
+              <div class="upload-icon">＋</div>
+              <h2>Select one PDF file</h2>
+              <p>Drag and drop a PDF here, or choose a file. Then compress/optimize it directly in your browser.</p>
+              <div class="button-row">
+                <button class="btn btn-primary" id="chooseBtn" type="button">Choose PDF File</button>
+                <button class="btn btn-soft" id="clearBtn" type="button" disabled>Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-head"><div><h2>Selected file</h2><span>One PDF required.</span></div></div>
+          <div class="file-list" id="fileList"><div class="empty-list">No PDF selected yet.</div></div>
+
+          <div class="form-card">
+            <h2>Compression options</h2>
+            <p>This browser tool optimizes PDF structure. It does not upload your file and does not reduce image quality.</p>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="compressMode" value="rebuild" checked />
+                <span><strong>Clean rebuild</strong><span>Copies all pages into a fresh PDF and saves with object streams.</span></span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="compressMode" value="resave" />
+                <span><strong>Fast optimize</strong><span>Resaves the original PDF with optimized object streams.</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="progress-wrap" id="progressWrap" aria-live="polite">
+            <div class="progress-label"><span id="progressText">Preparing...</span><span id="progressPercent">0%</span></div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+
+          <div class="result-card" id="resultCard">
+            <strong id="resultTitle">Compression complete</strong>
+            <span id="resultText"></span>
+          </div>
+
+          <div class="message" id="messageBox"></div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>Compress summary</h2>
+            <p>Select a PDF and optimize it for smaller or cleaner output.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="pageCount">0</strong><span>Total pages</span></div>
+              <div class="summary-box"><strong id="fileSize">0 B</strong><span>Original size</span></div>
+            </div>
+            <div class="action-stack">
+              <button class="btn btn-primary" id="compressBtn" type="button" disabled>Compress PDF</button>
+              <button class="btn btn-soft" id="downloadAgainBtn" type="button" disabled>Download Again</button>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>Note.</b> Text PDFs often optimize better than scanned image PDFs.</div>
+              <div class="tip"><b>Safe.</b> Your PDF is processed locally in this browser.</div>
+              <div class="tip"><b>Quality.</b> This tool keeps original page quality.</div>
+            </div>
+          </div>
+          <div class="side-card"><h2>Privacy note</h2><p>Your PDF is processed locally in the browser and is not uploaded to a server.</p></div>
+          <div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — Compress PDF Tool.</span>
+      <span>Browser-based • Free • No signup</span>
+    </div>
+  </footer>
+
+  <script src="../js/pdf-lib.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const chooseBtn = document.getElementById('chooseBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const compressBtn = document.getElementById('compressBtn');
+    const downloadAgainBtn = document.getElementById('downloadAgainBtn');
+    const dropzone = document.getElementById('dropzone');
+    const fileList = document.getElementById('fileList');
+    const pageCount = document.getElementById('pageCount');
+    const fileSize = document.getElementById('fileSize');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const messageBox = document.getElementById('messageBox');
+    const resultCard = document.getElementById('resultCard');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultText = document.getElementById('resultText');
+
+    let pdfFile = null;
+    let lastBlobUrl = null;
+    let lastFileName = 'compressed-pdf.pdf';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function fileBaseName(fileName, fallback = 'file') {
+      return (fileName || fallback)
+        .split(/[\/]/).pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\/:*?"<>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() || fallback;
+    }
+
+    function outputFileName(fileName, suffix, extension) {
+      return `${fileBaseName(fileName)}-${suffix}.${extension}`;
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      const value = bytes / Math.pow(1024, index);
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function selectedMode() {
+      return document.querySelector('input[name="compressMode"]:checked').value;
+    }
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function hideMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message';
+    }
+
+    function hideResult() {
+      resultCard.classList.remove('show');
+      resultTitle.textContent = '';
+      resultText.textContent = '';
+    }
+
+    function setProgress(percent, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressWrap.style.display = 'block';
+      progressBar.style.width = `${safePercent}%`;
+      progressPercent.textContent = `${safePercent}%`;
+      progressText.textContent = text;
+    }
+
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+    }
+
+    function resetDownload() {
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+      lastBlobUrl = null;
+      downloadAgainBtn.disabled = true;
+    }
+
+    function updateSummary() {
+      pageCount.textContent = pdfFile ? pdfFile.pages : 0;
+      fileSize.textContent = pdfFile ? formatBytes(pdfFile.size) : '0 B';
+      clearBtn.disabled = !pdfFile;
+      compressBtn.disabled = !pdfFile;
+    }
+
+    function renderFile() {
+      if (!pdfFile) {
+        fileList.innerHTML = '<div class="empty-list">No PDF selected yet.</div>';
+        updateSummary();
+        return;
+      }
+      fileList.innerHTML = `
+        <div class="file-item">
+          <div class="file-icon">PDF</div>
+          <div>
+            <div class="file-name">${escapeHtml(pdfFile.name)}</div>
+            <div class="file-meta"><span class="meta-pill">✓ ${pdfFile.pages} page${pdfFile.pages === 1 ? '' : 's'}</span><span class="meta-pill">${formatBytes(pdfFile.size)}</span></div>
+          </div>
+          <div class="file-actions"><button class="icon-btn remove" type="button" id="removeFileBtn" aria-label="Remove file">×</button></div>
+        </div>`;
+      document.getElementById('removeFileBtn').addEventListener('click', clearFile);
+      updateSummary();
+    }
+
+    async function loadFile(file) {
+      hideMessage();
+      hideProgress();
+      hideResult();
+      resetDownload();
+      if (!file || (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf'))) {
+        showMessage('Please select a valid PDF file.', 'error');
+        return;
+      }
+      try {
+        setProgress(15, 'Reading PDF...');
+        const bytes = await file.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+        pdfFile = { name: file.name, size: file.size, bytes, pages: pdfDoc.getPageCount() };
+        setProgress(100, 'PDF loaded.');
+        renderFile();
+        showMessage('PDF loaded successfully. Click Compress PDF to optimize it.', 'success');
+        setTimeout(hideProgress, 700);
+      } catch (error) {
+        console.error(error);
+        pdfFile = null;
+        renderFile();
+        showMessage('Could not read this PDF. It may be damaged, password-protected, or unsupported.', 'error');
+        hideProgress();
+      }
+    }
+
+    function clearFile() {
+      pdfFile = null;
+      fileInput.value = '';
+      resetDownload();
+      hideMessage();
+      hideProgress();
+      hideResult();
+      renderFile();
+    }
+
+    async function compressPdf() {
+      hideMessage();
+      hideResult();
+      resetDownload();
+      if (!pdfFile) {
+        showMessage('Please select a PDF first.', 'error');
+        return;
+      }
+
+      try {
+        compressBtn.disabled = true;
+        const mode = selectedMode();
+        setProgress(12, 'Loading PDF...');
+        const sourcePdf = await PDFLib.PDFDocument.load(pdfFile.bytes, { updateMetadata: false });
+        let outputBytes;
+
+        if (mode === 'rebuild') {
+          setProgress(28, 'Rebuilding PDF pages...');
+          const newPdf = await PDFLib.PDFDocument.create();
+          const pages = await newPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
+          pages.forEach((page, index) => {
+            newPdf.addPage(page);
+            setProgress(28 + ((index + 1) / pages.length) * 42, `Copied page ${index + 1} of ${pages.length}...`);
+          });
+          setProgress(82, 'Saving optimized PDF...');
+          outputBytes = await newPdf.save({ useObjectStreams: true, addDefaultPage: false });
+        } else {
+          setProgress(60, 'Resaving with object streams...');
+          outputBytes = await sourcePdf.save({ useObjectStreams: true, addDefaultPage: false });
+        }
+
+        const originalSize = pdfFile.size;
+        const newSize = outputBytes.byteLength;
+        const savedBytes = originalSize - newSize;
+        const savedPercent = originalSize ? ((savedBytes / originalSize) * 100) : 0;
+
+        lastBlobUrl = URL.createObjectURL(new Blob([outputBytes], { type: 'application/pdf' }));
+        lastFileName = outputFileName(pdfFile.name, 'compressed', 'pdf');
+        setProgress(100, 'Done! Download starting...');
+        downloadBlob(lastBlobUrl, lastFileName);
+        downloadAgainBtn.disabled = false;
+
+        resultCard.classList.add('show');
+        if (savedBytes > 0) {
+          resultTitle.textContent = 'Compression complete';
+          resultText.textContent = `Original: ${formatBytes(originalSize)} • New: ${formatBytes(newSize)} • Saved: ${formatBytes(savedBytes)} (${savedPercent.toFixed(1)}%).`;
+          showMessage('Your optimized PDF has been downloaded.', 'success');
+        } else {
+          resultTitle.textContent = 'Optimization complete';
+          resultText.textContent = `Original: ${formatBytes(originalSize)} • New: ${formatBytes(newSize)}. This PDF was already optimized, so size reduction was limited.`;
+          showMessage('Download created. This PDF may already be optimized, so the new file may not be smaller.', 'info');
+        }
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to compress this PDF. Please check if it is damaged, password-protected, or unsupported.', 'error');
+      } finally {
+        setTimeout(hideProgress, 900);
+        updateSummary();
+      }
+    }
+
+    function downloadBlob(url, fileName) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => {
+      loadFile(event.target.files[0]);
+      fileInput.value = '';
+    });
+    clearBtn.addEventListener('click', clearFile);
+    compressBtn.addEventListener('click', compressPdf);
+    downloadAgainBtn.addEventListener('click', () => { if (lastBlobUrl) downloadBlob(lastBlobUrl, lastFileName); });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+    dropzone.addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+    window.addEventListener('beforeunload', () => { if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl); });
+
+    renderFile();
+  </script>
+</body>
+</html>

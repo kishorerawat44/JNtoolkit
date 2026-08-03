@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rearrange PDF Pages - JNToolkits</title>
+  <meta name="description" content="Rearrange PDF pages online for free. Preview pages in a grid, drag and drop to reorder, then download a new PDF." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> Drag, drop & reorder</span>
+            <h1>Rearrange PDF pages <span class="gradient-text">visually.</span></h1>
+            <p>Upload one PDF, see all pages in a grid, shuffle pages by drag and drop or buttons, then download a new arranged PDF. Everything runs in your browser.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ Page previews</span>
+              <span class="badge">✓ Drag & drop</span>
+              <span class="badge">✓ No server upload</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">🧩</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="dropzone" id="dropzone">
+            <input class="file-input" id="fileInput" type="file" accept="application/pdf,.pdf" />
+            <div>
+              <div class="upload-icon">＋</div>
+              <h2>Select one PDF file</h2>
+              <p>Drag and drop a PDF here, or choose a file. Page previews will appear below as cards.</p>
+              <div class="button-row">
+                <button class="btn btn-primary" id="chooseBtn" type="button">Choose PDF File</button>
+                <button class="btn btn-soft" id="clearBtn" type="button" disabled>Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-head">
+            <div>
+              <h2>Selected file</h2>
+              <span>One PDF required.</span>
+            </div>
+          </div>
+
+          <div class="file-list" id="fileList">
+            <div class="empty-list">No PDF selected yet.</div>
+          </div>
+
+          <div class="arrange-toolbar">
+            <div>
+              <h2>Page arrangement</h2>
+              <span>Drag cards to reorder pages. On mobile, use the arrow buttons.</span>
+            </div>
+            <div class="button-row arrange-actions">
+              <button class="btn btn-soft" id="resetOrderBtn" type="button" disabled>Reset</button>
+              <button class="btn btn-soft" id="reverseOrderBtn" type="button" disabled>Reverse</button>
+              <button class="btn btn-soft" id="shuffleOrderBtn" type="button" disabled>Shuffle</button>
+            </div>
+          </div>
+
+          <div class="page-grid" id="pageGrid">
+            <div class="empty-list">Upload a PDF to see page cards here.</div>
+          </div>
+
+          <div class="drag-help">Tip: The final PDF will follow the page order shown in this grid from left to right, top to bottom.</div>
+
+          <div class="progress-wrap" id="progressWrap" aria-live="polite">
+            <div class="progress-label">
+              <span id="progressText">Preparing...</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+
+          <div class="message" id="messageBox"></div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>Arrange summary</h2>
+            <p>Upload a PDF and reorder pages before downloading the new file.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="originalPageCount">0</strong><span>Original pages</span></div>
+              <div class="summary-box"><strong id="arrangedPageCount">0</strong><span>Arranged pages</span></div>
+            </div>
+            <div class="summary">
+              <div class="summary-box"><strong id="fileSize">0 B</strong><span>File size</span></div>
+              <div class="summary-box"><strong id="loadedThumbs">0</strong><span>Previews loaded</span></div>
+            </div>
+            <div class="action-stack">
+              <button class="btn btn-primary" id="downloadBtn" type="button" disabled>Download Rearranged PDF</button>
+              <button class="btn btn-soft" id="downloadAgainBtn" type="button" disabled>Download Again</button>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>1.</b> Upload one PDF file.</div>
+              <div class="tip"><b>2.</b> Drag page cards to change order.</div>
+              <div class="tip"><b>3.</b> Download the rearranged PDF.</div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <h2>Privacy note</h2>
+            <p>PDF previews and rearranging are processed locally in your browser. Your file is not uploaded to a server.</p>
+          </div>
+
+          <div class="side-card">
+            <div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — Rearrange PDF Tool.</span>
+      <span>Browser-based • Free • No signup</span>
+    </div>
+  </footer>
+
+  <script src="../js/pdf-lib.min.js"></script>
+  <script src="../js/pdfjs.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const chooseBtn = document.getElementById('chooseBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const resetOrderBtn = document.getElementById('resetOrderBtn');
+    const reverseOrderBtn = document.getElementById('reverseOrderBtn');
+    const shuffleOrderBtn = document.getElementById('shuffleOrderBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadAgainBtn = document.getElementById('downloadAgainBtn');
+    const dropzone = document.getElementById('dropzone');
+    const fileList = document.getElementById('fileList');
+    const pageGrid = document.getElementById('pageGrid');
+    const originalPageCount = document.getElementById('originalPageCount');
+    const arrangedPageCount = document.getElementById('arrangedPageCount');
+    const fileSize = document.getElementById('fileSize');
+    const loadedThumbs = document.getElementById('loadedThumbs');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const messageBox = document.getElementById('messageBox');
+
+    let pdfFile = null;
+    let pageOrder = [];
+    let thumbnails = {};
+    let draggedPosition = null;
+    let thumbnailJobId = 0;
+    let lastBlobUrl = null;
+    let lastFileName = 'rearranged-pdf.pdf';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function fileBaseName(fileName, fallback = 'file') {
+      return (fileName || fallback)
+        .split(/[\/]/).pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\/:*?"<>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() || fallback;
+    }
+
+    function outputFileName(fileName, suffix, extension) {
+      return `${fileBaseName(fileName)}-${suffix}.${extension}`;
+    }
+
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '../js/pdfjs.worker.min.js';
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      const value = bytes / Math.pow(1024, index);
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function hideMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message';
+    }
+
+    function setProgress(percent, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressWrap.style.display = 'block';
+      progressBar.style.width = `${safePercent}%`;
+      progressPercent.textContent = `${safePercent}%`;
+      progressText.textContent = text;
+    }
+
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+      progressText.textContent = 'Preparing...';
+    }
+
+    function resetDownload() {
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+      lastBlobUrl = null;
+      downloadAgainBtn.disabled = true;
+    }
+
+    function updateSummary() {
+      originalPageCount.textContent = pdfFile ? pdfFile.pages : 0;
+      arrangedPageCount.textContent = pageOrder.length;
+      fileSize.textContent = pdfFile ? formatBytes(pdfFile.size) : '0 B';
+      loadedThumbs.textContent = Object.keys(thumbnails).length;
+      const hasFile = Boolean(pdfFile);
+      const hasPages = pageOrder.length > 0;
+      clearBtn.disabled = !hasFile;
+      resetOrderBtn.disabled = !hasFile;
+      reverseOrderBtn.disabled = !hasFile || pageOrder.length < 2;
+      shuffleOrderBtn.disabled = !hasFile || pageOrder.length < 2;
+      downloadBtn.disabled = !hasFile || !hasPages;
+    }
+
+    function renderFile() {
+      if (!pdfFile) {
+        fileList.innerHTML = '<div class="empty-list">No PDF selected yet.</div>';
+        updateSummary();
+        return;
+      }
+
+      fileList.innerHTML = `
+        <div class="file-item">
+          <div class="file-icon">PDF</div>
+          <div>
+            <div class="file-name">${escapeHtml(pdfFile.name)}</div>
+            <div class="file-meta">
+              <span class="meta-pill">✓ ${pdfFile.pages} page${pdfFile.pages === 1 ? '' : 's'}</span>
+              <span class="meta-pill">${formatBytes(pdfFile.size)}</span>
+            </div>
+          </div>
+          <div class="file-actions"><button class="icon-btn remove" type="button" id="removeFileBtn" aria-label="Remove file">×</button></div>
+        </div>`;
+      document.getElementById('removeFileBtn').addEventListener('click', clearFile);
+      updateSummary();
+    }
+
+    function renderPages() {
+      if (!pdfFile) {
+        pageGrid.innerHTML = '<div class="empty-list">Upload a PDF to see page cards here.</div>';
+        updateSummary();
+        return;
+      }
+
+      if (pageOrder.length === 0) {
+        pageGrid.innerHTML = '<div class="empty-list">All pages have been removed. Reset order to restore them.</div>';
+        updateSummary();
+        return;
+      }
+
+      pageGrid.innerHTML = pageOrder.map((originalIndex, position) => {
+        const thumbnail = thumbnails[originalIndex];
+        const thumbMarkup = thumbnail
+          ? `<img src="${thumbnail}" alt="Preview of page ${originalIndex + 1}" draggable="false" />`
+          : `<div class="page-loading">Loading<br>Page ${originalIndex + 1}</div>`;
+
+        return `
+          <div class="page-card" draggable="true" data-position="${position}" data-page-index="${originalIndex}">
+            <div class="page-thumb">${thumbMarkup}</div>
+            <div class="page-info">
+              <div><strong>Page ${originalIndex + 1}</strong><span>Position ${position + 1}</span></div>
+              <span>Drag</span>
+            </div>
+            <div class="page-controls">
+              <button class="icon-btn" type="button" data-action="start" data-position="${position}" ${position === 0 ? 'disabled' : ''} title="Move to start">⇤</button>
+              <button class="icon-btn" type="button" data-action="left" data-position="${position}" ${position === 0 ? 'disabled' : ''} title="Move left">←</button>
+              <button class="icon-btn" type="button" data-action="right" data-position="${position}" ${position === pageOrder.length - 1 ? 'disabled' : ''} title="Move right">→</button>
+              <button class="icon-btn" type="button" data-action="end" data-position="${position}" ${position === pageOrder.length - 1 ? 'disabled' : ''} title="Move to end">⇥</button>
+              <button class="icon-btn remove" type="button" data-action="remove" data-position="${position}" title="Remove page">×</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateSummary();
+    }
+
+    async function loadFile(file) {
+      hideMessage();
+      hideProgress();
+      resetDownload();
+      thumbnailJobId++;
+      thumbnails = {};
+
+      if (!file || (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf'))) {
+        showMessage('Please select a valid PDF file.', 'error');
+        return;
+      }
+
+      try {
+        setProgress(10, 'Reading PDF...');
+        const bytes = await file.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+        const pages = pdfDoc.getPageCount();
+        pdfFile = { name: file.name, size: file.size, bytes, pages };
+        pageOrder = Array.from({ length: pages }, (_, index) => index);
+        renderFile();
+        renderPages();
+        showMessage('PDF loaded. Page previews are being generated now.', 'info');
+        await renderThumbnails(bytes, ++thumbnailJobId);
+      } catch (error) {
+        console.error(error);
+        pdfFile = null;
+        pageOrder = [];
+        thumbnails = {};
+        renderFile();
+        renderPages();
+        hideProgress();
+        showMessage('Could not read this PDF. It may be damaged, password-protected, or unsupported.', 'error');
+      }
+    }
+
+    async function renderThumbnails(bytes, jobId) {
+      try {
+        if (!window.pdfjsLib) throw new Error('PDF preview library is not loaded.');
+        setProgress(18, 'Loading page previews...');
+        const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(bytes.slice(0)) });
+        const pdf = await loadingTask.promise;
+
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+          if (jobId !== thumbnailJobId) return;
+          const page = await pdf.getPage(pageNumber);
+          const baseViewport = page.getViewport({ scale: 1 });
+          const targetWidth = 190;
+          const scale = targetWidth / baseViewport.width;
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d', { alpha: false });
+          canvas.width = Math.ceil(viewport.width);
+          canvas.height = Math.ceil(viewport.height);
+          await page.render({ canvasContext: context, viewport }).promise;
+          thumbnails[pageNumber - 1] = canvas.toDataURL('image/jpeg', 0.74);
+          renderPages();
+          setProgress(18 + (pageNumber / pdf.numPages) * 74, `Rendered preview ${pageNumber} of ${pdf.numPages}...`);
+        }
+
+        setProgress(100, 'All page previews loaded.');
+        showMessage('All pages are ready. Drag and drop pages to rearrange them.', 'success');
+        setTimeout(hideProgress, 700);
+      } catch (error) {
+        console.error(error);
+        hideProgress();
+        showMessage('PDF loaded, but page previews could not be rendered. You can still reorder page cards by page number.', 'error');
+      }
+    }
+
+    function clearFile() {
+      thumbnailJobId++;
+      pdfFile = null;
+      pageOrder = [];
+      thumbnails = {};
+      fileInput.value = '';
+      draggedPosition = null;
+      resetDownload();
+      hideMessage();
+      hideProgress();
+      renderFile();
+      renderPages();
+    }
+
+    function movePage(from, to) {
+      if (!pdfFile) return;
+      if (from < 0 || from >= pageOrder.length || to < 0 || to >= pageOrder.length || from === to) return;
+      const [page] = pageOrder.splice(from, 1);
+      pageOrder.splice(to, 0, page);
+      resetDownload();
+      renderPages();
+    }
+
+    function removePage(position) {
+      if (!pdfFile) return;
+      pageOrder.splice(position, 1);
+      resetDownload();
+      renderPages();
+      hideMessage();
+    }
+
+    function resetOrder() {
+      if (!pdfFile) return;
+      pageOrder = Array.from({ length: pdfFile.pages }, (_, index) => index);
+      resetDownload();
+      renderPages();
+      showMessage('Page order has been reset to the original PDF order.', 'info');
+    }
+
+    function reverseOrder() {
+      if (!pdfFile) return;
+      pageOrder.reverse();
+      resetDownload();
+      renderPages();
+      showMessage('Page order has been reversed.', 'info');
+    }
+
+    function shuffleOrder() {
+      if (!pdfFile) return;
+      for (let i = pageOrder.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pageOrder[i], pageOrder[j]] = [pageOrder[j], pageOrder[i]];
+      }
+      resetDownload();
+      renderPages();
+      showMessage('Pages have been shuffled. You can still adjust them manually.', 'info');
+    }
+
+    async function downloadRearrangedPdf() {
+      hideMessage();
+      resetDownload();
+      if (!pdfFile || pageOrder.length === 0) {
+        showMessage('Please upload a PDF and keep at least one page.', 'error');
+        return;
+      }
+
+      try {
+        downloadBtn.disabled = true;
+        setProgress(10, 'Creating rearranged PDF...');
+        const sourcePdf = await PDFLib.PDFDocument.load(pdfFile.bytes);
+        const newPdf = await PDFLib.PDFDocument.create();
+
+        for (let i = 0; i < pageOrder.length; i++) {
+          const [page] = await newPdf.copyPages(sourcePdf, [pageOrder[i]]);
+          newPdf.addPage(page);
+          setProgress(10 + ((i + 1) / pageOrder.length) * 76, `Added page ${i + 1} of ${pageOrder.length}...`);
+        }
+
+        setProgress(92, 'Saving new PDF...');
+        const bytes = await newPdf.save({ useObjectStreams: true, addDefaultPage: false });
+        lastBlobUrl = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+        lastFileName = outputFileName(pdfFile.name, 'rearranged', 'pdf');
+        downloadBlob(lastBlobUrl, lastFileName);
+        downloadAgainBtn.disabled = false;
+        setProgress(100, 'Done! Download starting...');
+        showMessage(`Success! Created a new PDF with ${pageOrder.length} arranged page${pageOrder.length === 1 ? '' : 's'}.`, 'success');
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to rearrange this PDF. Please check if it is damaged, password-protected, or unsupported.', 'error');
+      } finally {
+        setTimeout(hideProgress, 900);
+        updateSummary();
+      }
+    }
+
+    function downloadBlob(url, fileName) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => {
+      loadFile(event.target.files[0]);
+      fileInput.value = '';
+    });
+    clearBtn.addEventListener('click', clearFile);
+    resetOrderBtn.addEventListener('click', resetOrder);
+    reverseOrderBtn.addEventListener('click', reverseOrder);
+    shuffleOrderBtn.addEventListener('click', shuffleOrder);
+    downloadBtn.addEventListener('click', downloadRearrangedPdf);
+    downloadAgainBtn.addEventListener('click', () => { if (lastBlobUrl) downloadBlob(lastBlobUrl, lastFileName); });
+
+    pageGrid.addEventListener('dragstart', event => {
+      const card = event.target.closest('.page-card');
+      if (!card) return;
+      draggedPosition = Number(card.dataset.position);
+      card.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', String(draggedPosition));
+    });
+
+    pageGrid.addEventListener('dragend', event => {
+      const card = event.target.closest('.page-card');
+      if (card) card.classList.remove('dragging');
+      document.querySelectorAll('.page-card.drag-over').forEach(item => item.classList.remove('drag-over'));
+      draggedPosition = null;
+    });
+
+    pageGrid.addEventListener('dragover', event => {
+      const card = event.target.closest('.page-card');
+      if (!card || draggedPosition === null) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      document.querySelectorAll('.page-card.drag-over').forEach(item => item.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+
+    pageGrid.addEventListener('dragleave', event => {
+      const card = event.target.closest('.page-card');
+      if (card) card.classList.remove('drag-over');
+    });
+
+    pageGrid.addEventListener('drop', event => {
+      const card = event.target.closest('.page-card');
+      if (!card || draggedPosition === null) return;
+      event.preventDefault();
+      const targetPosition = Number(card.dataset.position);
+      movePage(draggedPosition, targetPosition);
+      draggedPosition = null;
+    });
+
+    pageGrid.addEventListener('click', event => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      const position = Number(button.dataset.position);
+      const action = button.dataset.action;
+      if (action === 'start') movePage(position, 0);
+      if (action === 'left') movePage(position, position - 1);
+      if (action === 'right') movePage(position, position + 1);
+      if (action === 'end') movePage(position, pageOrder.length - 1);
+      if (action === 'remove') removePage(position);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+    window.addEventListener('beforeunload', () => { if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl); });
+
+    renderFile();
+    renderPages();
+  </script>
+</body>
+</html>

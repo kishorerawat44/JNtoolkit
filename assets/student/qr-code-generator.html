@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Generator - JNToolkits</title>
+  <meta name="description" content="Generate custom QR codes for links, phone numbers, email, and Wi-Fi with logo, colors, JPG, PNG, and SVG downloads." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> Custom QR utility</span>
+            <h1>QR Code Generator <span class="gradient-text">with logo.</span></h1>
+            <p>Create QR codes for links, contact numbers, email, and Wi-Fi passwords. Customize color, add a logo, scale/position it, and download as PNG, JPG, or SVG.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ Link QR</span>
+              <span class="badge">✓ Number QR</span>
+              <span class="badge">✓ Email QR</span>
+              <span class="badge">✓ Wi-Fi QR</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">▦</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="form-card">
+            <h2>QR content</h2>
+            <p>Select the type of QR code and enter the required details.</p>
+
+            <div class="chips" aria-label="QR code tabs">
+              <button class="chip active" type="button" data-tab="link">1. Link</button>
+              <button class="chip" type="button" data-tab="number">2. Contact Number</button>
+              <button class="chip" type="button" data-tab="email">3. Email</button>
+              <button class="chip" type="button" data-tab="wifi">4. Wi-Fi Password</button>
+            </div>
+
+            <div class="qr-tab-panel" id="linkPanel">
+              <div class="form-field">
+                <label for="linkInput">Website link</label>
+                <input class="input" id="linkInput" type="url" value="https://jntoolkits.com" placeholder="https://example.com" />
+              </div>
+            </div>
+
+            <div class="qr-tab-panel" id="numberPanel" hidden>
+              <div class="form-field">
+                <label for="numberInput">Contact number</label>
+                <input class="input" id="numberInput" type="tel" value="+911234567890" placeholder="+91XXXXXXXXXX" />
+              </div>
+            </div>
+
+            <div class="qr-tab-panel" id="emailPanel" hidden>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="emailInput">Email address</label>
+                  <input class="input" id="emailInput" type="email" value="hello@example.com" placeholder="name@example.com" />
+                </div>
+                <div class="form-field">
+                  <label for="emailSubjectInput">Subject</label>
+                  <input class="input" id="emailSubjectInput" value="Hello" placeholder="Email subject" />
+                </div>
+                <div class="form-field full">
+                  <label for="emailBodyInput">Message</label>
+                  <textarea class="textarea" id="emailBodyInput" placeholder="Email message">Hi, I am contacting you from your QR code.</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="qr-tab-panel" id="wifiPanel" hidden>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="wifiNameInput">Wi-Fi name / SSID</label>
+                  <input class="input" id="wifiNameInput" placeholder="Network name" />
+                </div>
+                <div class="form-field">
+                  <label for="wifiPasswordInput">Wi-Fi password</label>
+                  <input class="input" id="wifiPasswordInput" placeholder="Password" />
+                </div>
+                <div class="form-field full">
+                  <label for="wifiSecurityInput">Security type</label>
+                  <select class="select" id="wifiSecurityInput">
+                    <option value="WPA" selected>WPA/WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">No password</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h2>Design options</h2>
+            <p>Change QR color and add a logo in the center or any position.</p>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="outputSizeInput">Output size</label>
+                <select class="select" id="outputSizeInput">
+                  <option value="512">512 × 512</option>
+                  <option value="768" selected>768 × 768</option>
+                  <option value="1024">1024 × 1024</option>
+                  <option value="1400">1400 × 1400</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="qrColorInput">QR color</label>
+                <input class="input" id="qrColorInput" type="color" value="#0f172a" />
+              </div>
+              <div class="form-field">
+                <label for="bgColorInput">Background color</label>
+                <input class="input" id="bgColorInput" type="color" value="#ffffff" />
+              </div>
+              <div class="form-field">
+                <label for="logoInput">Logo image</label>
+                <input class="input" id="logoInput" type="file" accept="image/jpeg,image/png,image/webp" />
+              </div>
+              <div class="form-field">
+                <label for="logoSizeInput">Logo size: <span id="logoSizeValue">18%</span></label>
+                <input class="input" id="logoSizeInput" type="range" min="8" max="34" value="18" />
+              </div>
+              <div class="form-field">
+                <label for="logoXInput">Logo X position: <span id="logoXValue">50%</span></label>
+                <input class="input" id="logoXInput" type="range" min="15" max="85" value="50" />
+              </div>
+              <div class="form-field">
+                <label for="logoYInput">Logo Y position: <span id="logoYValue">50%</span></label>
+                <input class="input" id="logoYInput" type="range" min="15" max="85" value="50" />
+              </div>
+              <div class="form-field">
+                <label>Logo preview</label>
+                <div class="logo-preview-box" id="logoPreview"><span>No logo selected</span></div>
+              </div>
+            </div>
+            <div class="button-row qr-downloads">
+              <button class="btn btn-primary" id="generateBtn" type="button">Generate QR</button>
+              <button class="btn btn-soft" id="removeLogoBtn" type="button" disabled>Remove Logo</button>
+            </div>
+          </div>
+
+          <div class="utility-output">
+            <h2>Preview</h2>
+            <div class="qr-preview" id="qrPreview"></div>
+            <div class="button-row qr-downloads">
+              <button class="btn btn-primary" id="downloadPngBtn" type="button" disabled>Download PNG</button>
+              <button class="btn btn-soft" id="downloadJpgBtn" type="button" disabled>Download JPG</button>
+              <button class="btn btn-soft" id="downloadSvgBtn" type="button" disabled>Download SVG</button>
+            </div>
+            <div class="message" id="messageBox"></div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>QR summary</h2>
+            <p>Generate a branded QR code instantly in your browser.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="typeSummary">Link</strong><span>QR type</span></div>
+              <div class="summary-box"><strong id="sizeSummary">768</strong><span>Pixels</span></div>
+            </div>
+            <div class="summary">
+              <div class="summary-box"><strong id="logoSummary">No</strong><span>Logo</span></div>
+              <div class="summary-box"><strong id="formatSummary">3</strong><span>Formats</span></div>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>Logo.</b> Keep logo size below 25% for better scanning.</div>
+              <div class="tip"><b>Color.</b> Use good contrast between QR and background.</div>
+              <div class="tip"><b>Wi-Fi.</b> Share network login without typing the password.</div>
+            </div>
+          </div>
+
+          <div class="side-card"><h2>Privacy note</h2><p>QR codes and logos are processed locally in your browser. Nothing is uploaded.</p></div>
+          <div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — QR Code Generator.</span>
+      <span>PNG • JPG • SVG • Logo support</span>
+    </div>
+  </footer>
+
+  <script src="../js/qrcode.js"></script>
+  <script>
+    const tabButtons = document.querySelectorAll('[data-tab]');
+    const panels = {
+      link: document.getElementById('linkPanel'),
+      number: document.getElementById('numberPanel'),
+      email: document.getElementById('emailPanel'),
+      wifi: document.getElementById('wifiPanel')
+    };
+
+    const linkInput = document.getElementById('linkInput');
+    const numberInput = document.getElementById('numberInput');
+    const emailInput = document.getElementById('emailInput');
+    const emailSubjectInput = document.getElementById('emailSubjectInput');
+    const emailBodyInput = document.getElementById('emailBodyInput');
+    const wifiNameInput = document.getElementById('wifiNameInput');
+    const wifiPasswordInput = document.getElementById('wifiPasswordInput');
+    const wifiSecurityInput = document.getElementById('wifiSecurityInput');
+    const outputSizeInput = document.getElementById('outputSizeInput');
+    const qrColorInput = document.getElementById('qrColorInput');
+    const bgColorInput = document.getElementById('bgColorInput');
+    const logoInput = document.getElementById('logoInput');
+    const logoSizeInput = document.getElementById('logoSizeInput');
+    const logoXInput = document.getElementById('logoXInput');
+    const logoYInput = document.getElementById('logoYInput');
+    const logoSizeValue = document.getElementById('logoSizeValue');
+    const logoXValue = document.getElementById('logoXValue');
+    const logoYValue = document.getElementById('logoYValue');
+    const logoPreview = document.getElementById('logoPreview');
+    const removeLogoBtn = document.getElementById('removeLogoBtn');
+    const qrPreview = document.getElementById('qrPreview');
+    const downloadPngBtn = document.getElementById('downloadPngBtn');
+    const downloadJpgBtn = document.getElementById('downloadJpgBtn');
+    const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+    const messageBox = document.getElementById('messageBox');
+    const typeSummary = document.getElementById('typeSummary');
+    const sizeSummary = document.getElementById('sizeSummary');
+    const logoSummary = document.getElementById('logoSummary');
+
+    let activeTab = 'link';
+    let logoDataUrl = '';
+    let logoImage = null;
+    let lastCanvas = null;
+    let lastSvg = '';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function escapeXml(text) {
+      return String(text).replace(/[<>&"']/g, char => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[char]));
+    }
+
+    function setActiveTab(tab) {
+      activeTab = tab;
+      tabButtons.forEach(button => button.classList.toggle('active', button.dataset.tab === tab));
+      Object.entries(panels).forEach(([name, panel]) => panel.hidden = name !== tab);
+      generateQr();
+    }
+
+    function normalizeLink(value) {
+      const trimmed = value.trim();
+      if (!trimmed) return '';
+      if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+      return trimmed.includes('.') ? `https://${trimmed}` : trimmed;
+    }
+
+    function escapeWifi(value) {
+      return String(value).replace(/([\\;,:"'])/g, '\\$1');
+    }
+
+    function getQrText() {
+      if (activeTab === 'link') return normalizeLink(linkInput.value);
+      if (activeTab === 'number') {
+        const number = numberInput.value.trim();
+        return number ? `tel:${number}` : '';
+      }
+      if (activeTab === 'email') {
+        const email = emailInput.value.trim();
+        if (!email) return '';
+        const params = [];
+        if (emailSubjectInput.value.trim()) params.push(`subject=${encodeURIComponent(emailSubjectInput.value.trim())}`);
+        if (emailBodyInput.value.trim()) params.push(`body=${encodeURIComponent(emailBodyInput.value.trim())}`);
+        return `mailto:${email}${params.length ? `?${params.join('&')}` : ''}`;
+      }
+      if (activeTab === 'wifi') {
+        const ssid = wifiNameInput.value.trim();
+        const password = wifiPasswordInput.value;
+        const security = wifiSecurityInput.value;
+        if (!ssid) return '';
+        if (security === 'nopass') return `WIFI:T:nopass;S:${escapeWifi(ssid)};;`;
+        return `WIFI:T:${security};S:${escapeWifi(ssid)};P:${escapeWifi(password)};;`;
+      }
+      return '';
+    }
+
+    function roundedRect(ctx, x, y, width, height, radius) {
+      const safeRadius = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + safeRadius, y);
+      ctx.arcTo(x + width, y, x + width, y + height, safeRadius);
+      ctx.arcTo(x + width, y + height, x, y + height, safeRadius);
+      ctx.arcTo(x, y + height, x, y, safeRadius);
+      ctx.arcTo(x, y, x + width, y, safeRadius);
+      ctx.closePath();
+    }
+
+    function drawLogoOnCanvas(ctx, canvasSize) {
+      if (!logoImage) return;
+      const logoSize = canvasSize * Number(logoSizeInput.value) / 100;
+      const centerX = canvasSize * Number(logoXInput.value) / 100;
+      const centerY = canvasSize * Number(logoYInput.value) / 100;
+      const x = Math.max(0, Math.min(canvasSize - logoSize, centerX - logoSize / 2));
+      const y = Math.max(0, Math.min(canvasSize - logoSize, centerY - logoSize / 2));
+      const padding = Math.max(8, logoSize * 0.12);
+      const bgX = Math.max(0, x - padding);
+      const bgY = Math.max(0, y - padding);
+      const bgSize = Math.min(canvasSize - bgX, logoSize + padding * 2);
+
+      ctx.fillStyle = bgColorInput.value;
+      roundedRect(ctx, bgX, bgY, bgSize, bgSize, Math.max(10, bgSize * 0.18));
+      ctx.fill();
+
+      const ratio = Math.min(logoSize / logoImage.naturalWidth, logoSize / logoImage.naturalHeight);
+      const drawW = logoImage.naturalWidth * ratio;
+      const drawH = logoImage.naturalHeight * ratio;
+      ctx.drawImage(logoImage, x + (logoSize - drawW) / 2, y + (logoSize - drawH) / 2, drawW, drawH);
+    }
+
+    function buildSvg(qr, canvasSize, cell, margin) {
+      const moduleCount = qr.getModuleCount();
+      const darkColor = escapeXml(qrColorInput.value);
+      const bgColor = escapeXml(bgColorInput.value);
+      let rects = `<rect width="${canvasSize}" height="${canvasSize}" fill="${bgColor}"/>`;
+
+      for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+          if (qr.isDark(row, col)) {
+            rects += `<rect x="${margin + col * cell}" y="${margin + row * cell}" width="${cell}" height="${cell}" fill="${darkColor}"/>`;
+          }
+        }
+      }
+
+      if (logoDataUrl && logoImage) {
+        const logoSize = canvasSize * Number(logoSizeInput.value) / 100;
+        const centerX = canvasSize * Number(logoXInput.value) / 100;
+        const centerY = canvasSize * Number(logoYInput.value) / 100;
+        const x = Math.max(0, Math.min(canvasSize - logoSize, centerX - logoSize / 2));
+        const y = Math.max(0, Math.min(canvasSize - logoSize, centerY - logoSize / 2));
+        const padding = Math.max(8, logoSize * 0.12);
+        const bgX = Math.max(0, x - padding);
+        const bgY = Math.max(0, y - padding);
+        const bgSize = Math.min(canvasSize - bgX, logoSize + padding * 2);
+        rects += `<rect x="${bgX}" y="${bgY}" width="${bgSize}" height="${bgSize}" rx="${Math.max(10, bgSize * 0.18)}" fill="${bgColor}"/>`;
+        rects += `<image href="${logoDataUrl}" x="${x}" y="${y}" width="${logoSize}" height="${logoSize}" preserveAspectRatio="xMidYMid meet"/>`;
+      }
+
+      return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${canvasSize}" height="${canvasSize}" viewBox="0 0 ${canvasSize} ${canvasSize}">${rects}</svg>`;
+    }
+
+    function generateQr() {
+      try {
+        logoSizeValue.textContent = `${logoSizeInput.value}%`;
+        logoXValue.textContent = `${logoXInput.value}%`;
+        logoYValue.textContent = `${logoYInput.value}%`;
+        typeSummary.textContent = activeTab === 'number' ? 'Number' : activeTab === 'wifi' ? 'Wi-Fi' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
+        sizeSummary.textContent = outputSizeInput.value;
+        logoSummary.textContent = logoImage ? 'Yes' : 'No';
+
+        const text = getQrText();
+        if (!text) {
+          showMessage('Enter required details to generate the QR code.', 'error');
+          return;
+        }
+
+        const qr = qrcode(0, 'H');
+        qr.addData(text);
+        qr.make();
+
+        const targetSize = Number(outputSizeInput.value);
+        const moduleCount = qr.getModuleCount();
+        const margin = Math.max(16, Math.round(targetSize * 0.07));
+        const cell = Math.max(1, Math.floor((targetSize - margin * 2) / moduleCount));
+        const canvasSize = cell * moduleCount + margin * 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = bgColorInput.value;
+        ctx.fillRect(0, 0, canvasSize, canvasSize);
+        ctx.fillStyle = qrColorInput.value;
+        for (let row = 0; row < moduleCount; row++) {
+          for (let col = 0; col < moduleCount; col++) {
+            if (qr.isDark(row, col)) ctx.fillRect(margin + col * cell, margin + row * cell, cell, cell);
+          }
+        }
+
+        drawLogoOnCanvas(ctx, canvasSize);
+        lastCanvas = canvas;
+        lastSvg = buildSvg(qr, canvasSize, cell, margin);
+        qrPreview.innerHTML = '';
+        qrPreview.appendChild(canvas);
+        downloadPngBtn.disabled = false;
+        downloadJpgBtn.disabled = false;
+        downloadSvgBtn.disabled = false;
+        showMessage('QR code generated successfully.', 'success');
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to generate QR code. Try shorter content or different details.', 'error');
+      }
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    async function handleLogo(file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showMessage('Please choose a valid logo image.', 'error');
+        return;
+      }
+      logoDataUrl = await fileToDataUrl(file);
+      logoImage = await loadImage(logoDataUrl);
+      logoPreview.innerHTML = `<img src="${logoDataUrl}" alt="Logo preview" />`;
+      removeLogoBtn.disabled = false;
+      generateQr();
+    }
+
+    function removeLogo() {
+      logoDataUrl = '';
+      logoImage = null;
+      logoInput.value = '';
+      logoPreview.innerHTML = '<span>No logo selected</span>';
+      removeLogoBtn.disabled = true;
+      generateQr();
+    }
+
+    function downloadDataUrl(dataUrl, fileName) {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function downloadBlob(content, type, fileName) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 300);
+    }
+
+    tabButtons.forEach(button => button.addEventListener('click', () => setActiveTab(button.dataset.tab)));
+    document.getElementById('generateBtn').addEventListener('click', generateQr);
+    removeLogoBtn.addEventListener('click', removeLogo);
+    logoInput.addEventListener('change', event => handleLogo(event.target.files[0]));
+
+    [
+      linkInput, numberInput, emailInput, emailSubjectInput, emailBodyInput,
+      wifiNameInput, wifiPasswordInput, wifiSecurityInput, outputSizeInput,
+      qrColorInput, bgColorInput, logoSizeInput, logoXInput, logoYInput
+    ].forEach(input => input.addEventListener('input', generateQr));
+
+    downloadPngBtn.addEventListener('click', () => {
+      if (lastCanvas) downloadDataUrl(lastCanvas.toDataURL('image/png'), 'qr-code.png');
+    });
+
+    downloadJpgBtn.addEventListener('click', () => {
+      if (lastCanvas) downloadDataUrl(lastCanvas.toDataURL('image/jpeg', 0.92), 'qr-code.jpg');
+    });
+
+    downloadSvgBtn.addEventListener('click', () => {
+      if (lastSvg) downloadBlob(lastSvg, 'image/svg+xml', 'qr-code.svg');
+    });
+
+    generateQr();
+  </script>
+</body>
+</html>

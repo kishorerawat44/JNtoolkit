@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMI Calculator - JNToolkits</title>
+  <meta name="description" content="Calculate loan EMI, total interest, and total payment for free." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar"><div class="tool-container nav"><a href="../../index.html" class="brand"><span class="brand-mark">JN</span><span>JNToolkits<small>Free Online Utilities</small></span></a><nav class="nav-links"><a href="../../index.html">Home</a><a href="../../index.html#tools" class="active">All Tools</a></nav></div></header>
+  <main>
+    <section class="tool-hero-wrap"><div class="tool-container"><div class="tool-hero"><div><span class="eyebrow"><span class="pulse"></span> Finance calculator</span><h1>EMI Calculator <span class="gradient-text">for loans.</span></h1><p>Calculate monthly EMI, total interest, and total payable amount for home, car, personal, or education loans.</p><div class="hero-badges"><span class="badge">✓ Monthly EMI</span><span class="badge">✓ Total interest</span><span class="badge">✓ Free</span></div></div><div class="hero-icon-large">🏦</div></div></div></section>
+    <section class="workspace"><div class="tool-container workspace-grid"><div class="panel">
+      <div class="form-card"><h2>Loan details</h2><p>Enter principal, interest rate, and tenure.</p><div class="form-grid">
+        <div class="form-field"><label for="amount">Loan amount</label><input class="input" id="amount" type="number" min="0" value="500000" /></div>
+        <div class="form-field"><label for="rate">Annual interest rate (%)</label><input class="input" id="rate" type="number" min="0" step="0.01" value="9.5" /></div>
+        <div class="form-field"><label for="tenure">Tenure</label><input class="input" id="tenure" type="number" min="1" value="5" /></div>
+        <div class="form-field"><label for="tenureType">Tenure type</label><select class="select" id="tenureType"><option value="years">Years</option><option value="months">Months</option></select></div>
+      </div><div class="button-row"><button class="btn btn-primary" id="calculateBtn">Calculate EMI</button><button class="btn btn-soft" id="resetBtn">Reset</button></div></div>
+      <div class="utility-output"><h2>Result</h2><div class="metric-grid"><div class="metric-box"><strong id="emi">₹0</strong><span>Monthly EMI</span></div><div class="metric-box"><strong id="interest">₹0</strong><span>Total interest</span></div><div class="metric-box"><strong id="total">₹0</strong><span>Total payment</span></div><div class="metric-box"><strong id="months">0</strong><span>Months</span></div></div></div>
+    </div><aside><div class="side-card"><h2>How it works</h2><p>EMI is calculated using the standard reducing-balance loan formula.</p><div class="tips"><div class="tip"><b>Tip.</b> Higher tenure lowers EMI but increases total interest.</div><div class="tip"><b>Use.</b> Compare different loan offers quickly.</div></div></div><div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div></aside></div></section>
+  </main><footer><div class="tool-container footer-inner"><span><strong>JNToolkits</strong> © <span id="year"></span> — EMI Calculator.</span><span>Free • Fast • No signup</span></div></footer>
+  <script>
+    const amount=document.getElementById('amount'),rate=document.getElementById('rate'),tenure=document.getElementById('tenure'),tenureType=document.getElementById('tenureType');
+    const emi=document.getElementById('emi'),interest=document.getElementById('interest'),total=document.getElementById('total'),monthsOut=document.getElementById('months');
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+    function calculate(){const p=Number(amount.value)||0;const annual=Number(rate.value)||0;const n=(Number(tenure.value)||0)*(tenureType.value==='years'?12:1);const r=annual/12/100;let e=0;if(p&&n){e=r?p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):p/n;}const t=e*n;emi.textContent=fmt(e);interest.textContent=fmt(Math.max(0,t-p));total.textContent=fmt(t);monthsOut.textContent=n.toLocaleString('en-IN');}
+    document.getElementById('calculateBtn').addEventListener('click',calculate);[amount,rate,tenure,tenureType].forEach(el=>el.addEventListener('input',calculate));document.getElementById('resetBtn').addEventListener('click',()=>{amount.value=500000;rate.value=9.5;tenure.value=5;tenureType.value='years';calculate();});calculate();
+  </script>
+</body>
+</html>

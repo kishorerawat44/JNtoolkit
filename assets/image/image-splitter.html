@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Splitter - JNToolkits</title>
+  <meta name="description" content="Split a long image into multiple parts with horizontal or vertical cut lines. Download pieces separately or as a ZIP file." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> Split long images</span>
+            <h1>Image Splitter <span class="gradient-text">for clean parts.</span></h1>
+            <p>Upload a long screenshot, poster, or image, add horizontal/vertical cut lines, preview every piece, and download the split images as separate files or a ZIP.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ Horizontal cuts</span>
+              <span class="badge">✓ Vertical cuts</span>
+              <span class="badge">✓ ZIP download</span>
+              <span class="badge">✓ No upload</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">✂️</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="dropzone" id="topDropzone">
+            <input class="file-input" id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" />
+            <div>
+              <div class="upload-icon">＋</div>
+              <h2>Upload image to split</h2>
+              <p>Choose a long image or drag it here. Then place cut lines and download all pieces.</p>
+              <div class="button-row">
+                <button class="btn btn-primary" id="browseBtn" type="button">Choose Image</button>
+                <button class="btn btn-soft" id="clearImageBtn" type="button" disabled>Clear Image</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="splitter-controls">
+            <div class="splitter-control-card">
+              <h3>Auto equal cuts</h3>
+              <p>Place equal cut lines, then drag them to adjust.</p>
+              <div class="form-field field-spaced">
+                <label for="autoDirection">Direction</label>
+                <select class="select" id="autoDirection">
+                  <option value="h">Horizontal: top to bottom</option>
+                  <option value="v">Vertical: left to right</option>
+                </select>
+              </div>
+              <div class="form-field field-spaced">
+                <label for="autoParts">Number of parts</label>
+                <input class="input" id="autoParts" type="number" min="2" max="100" value="6" />
+              </div>
+              <button class="btn btn-primary btn-block" id="autoLinesBtn" type="button" disabled>Place Equal Lines</button>
+            </div>
+
+            <div class="splitter-control-card">
+              <h3>Manual cut lines</h3>
+              <p>Click a button, then click on the image where you want a cut.</p>
+              <div class="button-row">
+                <button class="btn btn-soft" id="addHorizontalBtn" type="button" disabled>＋ Horizontal</button>
+                <button class="btn btn-soft" id="addVerticalBtn" type="button" disabled>＋ Vertical</button>
+              </div>
+              <button class="btn btn-danger btn-block" id="clearLinesBtn" type="button" disabled>Clear Lines</button>
+              <div class="line-list" id="lineList"><div class="empty-list">No cut lines yet.</div></div>
+            </div>
+
+            <div class="splitter-control-card">
+              <h3>Export settings</h3>
+              <p>Choose output format and file name prefix.</p>
+              <div class="form-grid compact-two-grid">
+                <div class="form-field">
+                  <label for="formatSelect">Format</label>
+                  <select class="select" id="formatSelect">
+                    <option value="png">PNG</option>
+                    <option value="jpg">JPG</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="qualityInput">JPG quality</label>
+                  <input class="input" id="qualityInput" type="number" min="50" max="100" value="92" />
+                </div>
+                <div class="form-field full">
+                  <label for="prefixInput">File name prefix</label>
+                  <input class="input" id="prefixInput" value="part" />
+                </div>
+              </div>
+              <div class="action-stack">
+                <button class="btn btn-primary" id="downloadZipBtn" type="button" disabled>Download ZIP</button>
+                <button class="btn btn-soft" id="downloadSeparateBtn" type="button" disabled>Download Separate Files</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="utility-output">
+            <div class="arrange-toolbar">
+              <div>
+                <h2>Image workspace</h2>
+                <span id="placingHint">Load an image and add cut lines.</span>
+              </div>
+              <div class="splitter-toolbar">
+                <button class="btn btn-soft" id="zoomOutBtn" type="button" disabled>−</button>
+                <span class="zoom-label" id="zoomLabel">100%</span>
+                <button class="btn btn-soft" id="zoomInBtn" type="button" disabled>＋</button>
+                <button class="btn btn-soft" id="fitWidthBtn" type="button" disabled>Fit Width</button>
+                <button class="btn btn-soft" id="zoom100Btn" type="button" disabled>100%</button>
+              </div>
+            </div>
+
+            <div class="splitter-viewer" id="viewer">
+              <div class="splitter-empty" id="viewerDropzone">
+                <div>
+                  <div class="upload-icon">📥</div>
+                  <strong>Drag & drop image here</strong>
+                  <span>or click to choose an image</span>
+                </div>
+              </div>
+              <div class="splitter-stage" id="stage">
+                <img id="mainImage" alt="Image to split" />
+              </div>
+            </div>
+          </div>
+
+          <div class="utility-output">
+            <h2>Preview pieces</h2>
+            <p class="tools-note">Pieces are generated from left to right and top to bottom.</p>
+            <div class="piece-grid" id="piecesGrid"><div class="empty-list">Add cut lines to preview the pieces.</div></div>
+          </div>
+
+          <div class="progress-wrap" id="progressWrap" aria-live="polite">
+            <div class="progress-label"><span id="progressText">Preparing...</span><span id="progressPercent">0%</span></div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+          <div class="message" id="messageBox"></div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>Split summary</h2>
+            <p>Split long images into clean smaller parts for sharing or uploading.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="pieceCount">0</strong><span>Pieces</span></div>
+              <div class="summary-box"><strong id="lineCount">0</strong><span>Cut lines</span></div>
+            </div>
+            <div class="summary">
+              <div class="summary-box"><strong id="imageSize">0×0</strong><span>Image size</span></div>
+              <div class="summary-box"><strong id="fileSize">0 B</strong><span>File size</span></div>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>Auto.</b> Use equal cuts for long screenshots.</div>
+              <div class="tip"><b>Manual.</b> Drag lines so text/images are not cut in half.</div>
+              <div class="tip"><b>Export.</b> ZIP is best when there are many pieces.</div>
+            </div>
+          </div>
+
+          <div class="side-card"><h2>Privacy note</h2><p>Your image is split directly in your browser. Nothing is uploaded to a server.</p></div>
+          <div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — Image Splitter Tool.</span>
+      <span>Browser-based • Free • No signup</span>
+    </div>
+  </footer>
+
+  <script src="../js/jszip.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const browseBtn = document.getElementById('browseBtn');
+    const clearImageBtn = document.getElementById('clearImageBtn');
+    const topDropzone = document.getElementById('topDropzone');
+    const viewer = document.getElementById('viewer');
+    const viewerDropzone = document.getElementById('viewerDropzone');
+    const stage = document.getElementById('stage');
+    const mainImage = document.getElementById('mainImage');
+    const autoDirection = document.getElementById('autoDirection');
+    const autoParts = document.getElementById('autoParts');
+    const autoLinesBtn = document.getElementById('autoLinesBtn');
+    const addHorizontalBtn = document.getElementById('addHorizontalBtn');
+    const addVerticalBtn = document.getElementById('addVerticalBtn');
+    const clearLinesBtn = document.getElementById('clearLinesBtn');
+    const lineList = document.getElementById('lineList');
+    const formatSelect = document.getElementById('formatSelect');
+    const qualityInput = document.getElementById('qualityInput');
+    const prefixInput = document.getElementById('prefixInput');
+    const downloadZipBtn = document.getElementById('downloadZipBtn');
+    const downloadSeparateBtn = document.getElementById('downloadSeparateBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const fitWidthBtn = document.getElementById('fitWidthBtn');
+    const zoom100Btn = document.getElementById('zoom100Btn');
+    const zoomLabel = document.getElementById('zoomLabel');
+    const placingHint = document.getElementById('placingHint');
+    const piecesGrid = document.getElementById('piecesGrid');
+    const pieceCount = document.getElementById('pieceCount');
+    const lineCount = document.getElementById('lineCount');
+    const imageSize = document.getElementById('imageSize');
+    const fileSize = document.getElementById('fileSize');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const messageBox = document.getElementById('messageBox');
+
+    let image = new Image();
+    let imageLoaded = false;
+    let imageUrl = '';
+    let imageName = 'image';
+    let originalSize = 0;
+    let naturalWidth = 0;
+    let naturalHeight = 0;
+    let zoom = 1;
+    let hLines = [];
+    let vLines = [];
+    let nextLineId = 1;
+    let placing = null;
+    let selectedLine = null;
+    let previewTimer = null;
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function fileBaseName(fileName, fallback = 'image') {
+      return (fileName || fallback)
+        .split(/[\\/]/).pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\\/:*?"<>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() || fallback;
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      const value = bytes / Math.pow(1024, index);
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function showMessage(text, type = 'info') {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function setProgress(percent, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressWrap.style.display = 'block';
+      progressBar.style.width = `${safePercent}%`;
+      progressPercent.textContent = `${safePercent}%`;
+      progressText.textContent = text;
+    }
+
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function requireImage() {
+      if (!imageLoaded) {
+        showMessage('Please load an image first.', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    function updateSummary() {
+      const pieces = imageLoaded ? getPieces() : [];
+      pieceCount.textContent = pieces.length || 0;
+      lineCount.textContent = hLines.length + vLines.length;
+      imageSize.textContent = imageLoaded ? `${naturalWidth}×${naturalHeight}` : '0×0';
+      fileSize.textContent = formatBytes(originalSize);
+      const hasImage = imageLoaded;
+      [clearImageBtn, autoLinesBtn, addHorizontalBtn, addVerticalBtn, zoomOutBtn, zoomInBtn, fitWidthBtn, zoom100Btn].forEach(button => button.disabled = !hasImage);
+      clearLinesBtn.disabled = !hasImage || (!hLines.length && !vLines.length);
+      downloadZipBtn.disabled = !hasImage || pieces.length < 2;
+      downloadSeparateBtn.disabled = !hasImage || pieces.length < 2;
+    }
+
+    function loadFile(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        showMessage('Please choose a valid image file.', 'error');
+        return;
+      }
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      imageUrl = URL.createObjectURL(file);
+      imageName = file.name;
+      originalSize = file.size;
+      const loadedImage = new Image();
+      loadedImage.onload = () => {
+        image = loadedImage;
+        naturalWidth = image.naturalWidth;
+        naturalHeight = image.naturalHeight;
+        imageLoaded = true;
+        hLines = [];
+        vLines = [];
+        selectedLine = null;
+        placing = null;
+        nextLineId = 1;
+        mainImage.src = imageUrl;
+        viewerDropzone.style.display = 'none';
+        stage.style.display = 'block';
+        prefixInput.value = 'part';
+        fitWidth();
+        renderAll();
+        showMessage(`Image loaded: ${naturalWidth} × ${naturalHeight}px. Add cut lines to split it.`, 'success');
+      };
+      loadedImage.onerror = () => showMessage('Could not load this image. Please try another file.', 'error');
+      loadedImage.src = imageUrl;
+    }
+
+    function clearImage() {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      imageUrl = '';
+      image = new Image();
+      imageLoaded = false;
+      imageName = 'image';
+      originalSize = 0;
+      naturalWidth = 0;
+      naturalHeight = 0;
+      zoom = 1;
+      hLines = [];
+      vLines = [];
+      selectedLine = null;
+      placing = null;
+      mainImage.removeAttribute('src');
+      viewerDropzone.style.display = 'grid';
+      stage.style.display = 'none';
+      stage.querySelectorAll('.cutline').forEach(line => line.remove());
+      piecesGrid.innerHTML = '<div class="empty-list">Add cut lines to preview the pieces.</div>';
+      lineList.innerHTML = '<div class="empty-list">No cut lines yet.</div>';
+      zoomLabel.textContent = '100%';
+      placingHint.textContent = 'Load an image and add cut lines.';
+      hideProgress();
+      updateSummary();
+    }
+
+    function applyZoom() {
+      if (!imageLoaded) return;
+      mainImage.style.width = `${naturalWidth * zoom}px`;
+      mainImage.style.height = `${naturalHeight * zoom}px`;
+      zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+      positionLines();
+    }
+
+    function fitWidth() {
+      if (!imageLoaded) return;
+      const available = Math.max(280, viewer.clientWidth - 42);
+      zoom = clamp(available / naturalWidth, 0.03, 5);
+      applyZoom();
+    }
+
+    function addLine(direction, position) {
+      const max = direction === 'h' ? naturalHeight : naturalWidth;
+      const line = { id: nextLineId++, pos: clamp(Math.round(position), 1, max - 1) };
+      (direction === 'h' ? hLines : vLines).push(line);
+      selectedLine = { direction, id: line.id };
+      renderAll();
+    }
+
+    function setLinePosition(direction, id, position) {
+      const lines = direction === 'h' ? hLines : vLines;
+      const line = lines.find(item => item.id === id);
+      if (!line) return;
+      const max = direction === 'h' ? naturalHeight : naturalWidth;
+      line.pos = clamp(Math.round(position), 1, max - 1);
+    }
+
+    function removeLine(direction, id) {
+      if (direction === 'h') hLines = hLines.filter(line => line.id !== id);
+      if (direction === 'v') vLines = vLines.filter(line => line.id !== id);
+      if (selectedLine && selectedLine.direction === direction && selectedLine.id === id) selectedLine = null;
+      renderAll();
+    }
+
+    function setPlacing(direction) {
+      placing = placing === direction ? null : direction;
+      addHorizontalBtn.classList.toggle('btn-primary', placing === 'h');
+      addHorizontalBtn.classList.toggle('btn-soft', placing !== 'h');
+      addVerticalBtn.classList.toggle('btn-primary', placing === 'v');
+      addVerticalBtn.classList.toggle('btn-soft', placing !== 'v');
+      stage.classList.toggle('placing', Boolean(placing));
+      placingHint.textContent = placing === 'h'
+        ? 'Click on the image to place a horizontal cut line.'
+        : placing === 'v'
+          ? 'Click on the image to place a vertical cut line.'
+          : 'Drag existing cut lines or add new lines.';
+    }
+
+    function renderAll() {
+      renderStageLines();
+      renderLineList();
+      schedulePreview();
+      updateSummary();
+    }
+
+    function renderStageLines() {
+      stage.querySelectorAll('.cutline').forEach(line => line.remove());
+      if (!imageLoaded) return;
+      const createLine = (direction, line) => {
+        const element = document.createElement('div');
+        element.className = `cutline ${direction}`;
+        if (selectedLine && selectedLine.direction === direction && selectedLine.id === line.id) element.classList.add('selected');
+        element.dataset.direction = direction;
+        element.dataset.id = String(line.id);
+        const label = document.createElement('div');
+        label.className = 'lbl';
+        label.textContent = `${direction === 'h' ? 'y' : 'x'} = ${line.pos}px`;
+        element.appendChild(label);
+        element.addEventListener('pointerdown', startLineDrag);
+        element.addEventListener('click', event => {
+          event.stopPropagation();
+          selectedLine = { direction, id: line.id };
+          renderStageLines();
+          renderLineList();
+        });
+        stage.appendChild(element);
+      };
+      hLines.forEach(line => createLine('h', line));
+      vLines.forEach(line => createLine('v', line));
+      positionLines();
+    }
+
+    function positionLines() {
+      stage.querySelectorAll('.cutline').forEach(element => {
+        const direction = element.dataset.direction;
+        const id = Number(element.dataset.id);
+        const lines = direction === 'h' ? hLines : vLines;
+        const line = lines.find(item => item.id === id);
+        if (!line) return;
+        if (direction === 'h') element.style.top = `${line.pos * zoom}px`;
+        if (direction === 'v') element.style.left = `${line.pos * zoom}px`;
+      });
+    }
+
+    function startLineDrag(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const element = event.currentTarget;
+      const direction = element.dataset.direction;
+      const id = Number(element.dataset.id);
+      selectedLine = { direction, id };
+      element.setPointerCapture(event.pointerId);
+
+      const move = moveEvent => {
+        const rect = stage.getBoundingClientRect();
+        const position = direction === 'h'
+          ? (moveEvent.clientY - rect.top) / zoom
+          : (moveEvent.clientX - rect.left) / zoom;
+        setLinePosition(direction, id, position);
+        positionLines();
+        const lines = direction === 'h' ? hLines : vLines;
+        const line = lines.find(item => item.id === id);
+        const label = element.querySelector('.lbl');
+        if (line && label) label.textContent = `${direction === 'h' ? 'y' : 'x'} = ${line.pos}px`;
+      };
+
+      const up = () => {
+        element.removeEventListener('pointermove', move);
+        element.removeEventListener('pointerup', up);
+        renderAll();
+      };
+
+      element.addEventListener('pointermove', move);
+      element.addEventListener('pointerup', up);
+    }
+
+    function renderLineList() {
+      if (!hLines.length && !vLines.length) {
+        lineList.innerHTML = '<div class="empty-list">No cut lines yet.</div>';
+        return;
+      }
+
+      const items = [];
+      const buildItem = (direction, line) => {
+        const max = direction === 'h' ? naturalHeight : naturalWidth;
+        return `
+          <div class="line-item">
+            <span class="line-badge ${direction}">${direction.toUpperCase()}</span>
+            <input class="input" type="number" min="1" max="${max - 1}" value="${line.pos}" data-direction="${direction}" data-id="${line.id}" />
+            <span class="tag">px</span>
+            <button class="icon-btn remove" type="button" data-remove-direction="${direction}" data-remove-id="${line.id}">×</button>
+          </div>
+        `;
+      };
+      hLines.slice().sort((a, b) => a.pos - b.pos).forEach(line => items.push(buildItem('h', line)));
+      vLines.slice().sort((a, b) => a.pos - b.pos).forEach(line => items.push(buildItem('v', line)));
+      lineList.innerHTML = items.join('');
+    }
+
+    function getSegments(lines, max) {
+      const points = [0, ...lines.map(line => line.pos).sort((a, b) => a - b).filter((value, index, arr) => arr.indexOf(value) === index), max];
+      const segments = [];
+      for (let i = 0; i < points.length - 1; i++) {
+        const start = points[i];
+        const size = points[i + 1] - points[i];
+        if (size >= 1) segments.push([start, size]);
+      }
+      return segments;
+    }
+
+    function getPieces() {
+      if (!imageLoaded) return [];
+      const rows = getSegments(hLines, naturalHeight);
+      const cols = getSegments(vLines, naturalWidth);
+      const pieces = [];
+      let number = 1;
+      rows.forEach(([y, h]) => {
+        cols.forEach(([x, w]) => pieces.push({ number: number++, x, y, w, h }));
+      });
+      return pieces;
+    }
+
+    function schedulePreview() {
+      clearTimeout(previewTimer);
+      previewTimer = setTimeout(renderPreviews, 180);
+    }
+
+    function renderPreviews() {
+      if (!imageLoaded) {
+        piecesGrid.innerHTML = '<div class="empty-list">Add cut lines to preview the pieces.</div>';
+        return;
+      }
+
+      const pieces = getPieces();
+      if (pieces.length < 2) {
+        piecesGrid.innerHTML = '<div class="empty-list">Add at least one cut line to create multiple pieces.</div>';
+        updateSummary();
+        return;
+      }
+
+      piecesGrid.innerHTML = '';
+      pieces.forEach(piece => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'split-piece';
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(1, 260 / piece.w, 360 / piece.h);
+        canvas.width = Math.max(1, Math.round(piece.w * scale));
+        canvas.height = Math.max(1, Math.round(piece.h * scale));
+        canvas.getContext('2d').drawImage(image, piece.x, piece.y, piece.w, piece.h, 0, 0, canvas.width, canvas.height);
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `<b>Part ${piece.number}</b><span>${piece.w} × ${piece.h}px</span>`;
+        const button = document.createElement('button');
+        button.className = 'btn btn-soft';
+        button.type = 'button';
+        button.textContent = 'Download this part';
+        button.addEventListener('click', () => downloadPiece(piece));
+        wrapper.append(canvas, meta, button);
+        piecesGrid.appendChild(wrapper);
+      });
+      updateSummary();
+    }
+
+    function pieceBlob(piece) {
+      return new Promise(resolve => {
+        const canvas = document.createElement('canvas');
+        canvas.width = piece.w;
+        canvas.height = piece.h;
+        const context = canvas.getContext('2d');
+        if (formatSelect.value === 'jpg') {
+          context.fillStyle = '#ffffff';
+          context.fillRect(0, 0, piece.w, piece.h);
+        }
+        context.drawImage(image, piece.x, piece.y, piece.w, piece.h, 0, 0, piece.w, piece.h);
+        if (formatSelect.value === 'jpg') {
+          canvas.toBlob(resolve, 'image/jpeg', clamp(Number(qualityInput.value) || 92, 50, 100) / 100);
+        } else {
+          canvas.toBlob(resolve, 'image/png');
+        }
+      });
+    }
+
+    function pieceFileName(piece) {
+      const extension = formatSelect.value === 'jpg' ? 'jpg' : 'png';
+      const prefix = (prefixInput.value || 'part').trim().replace(/[\\/:*?"<>|]+/g, ' ') || 'part';
+      return `${fileBaseName(imageName)}-${prefix}-${piece.number}.${extension}`;
+    }
+
+    function downloadBlob(blob, fileName) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function downloadPiece(piece) {
+      const blob = await pieceBlob(piece);
+      downloadBlob(blob, pieceFileName(piece));
+    }
+
+    async function downloadSeparate() {
+      if (!requireImage()) return;
+      const pieces = getPieces();
+      if (pieces.length < 2) {
+        showMessage('Add at least one cut line first.', 'error');
+        return;
+      }
+      setProgress(5, 'Downloading pieces...');
+      for (let i = 0; i < pieces.length; i++) {
+        const blob = await pieceBlob(pieces[i]);
+        downloadBlob(blob, pieceFileName(pieces[i]));
+        setProgress(5 + ((i + 1) / pieces.length) * 90, `Downloaded ${i + 1} of ${pieces.length} pieces...`);
+        await new Promise(resolve => setTimeout(resolve, 280));
+      }
+      setProgress(100, 'Done!');
+      showMessage(`Downloaded ${pieces.length} separate image files.`, 'success');
+      setTimeout(hideProgress, 900);
+    }
+
+    async function downloadZip() {
+      if (!requireImage()) return;
+      const pieces = getPieces();
+      if (pieces.length < 2) {
+        showMessage('Add at least one cut line first.', 'error');
+        return;
+      }
+
+      try {
+        downloadZipBtn.disabled = true;
+        const zip = new JSZip();
+        for (let i = 0; i < pieces.length; i++) {
+          setProgress(8 + (i / pieces.length) * 74, `Creating piece ${i + 1} of ${pieces.length}...`);
+          const blob = await pieceBlob(pieces[i]);
+          zip.file(pieceFileName(pieces[i]), blob);
+        }
+        setProgress(88, 'Building ZIP file...');
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        downloadBlob(zipBlob, `${fileBaseName(imageName)}-split.zip`);
+        setProgress(100, 'Done! Download starting...');
+        showMessage(`Success! ZIP created with ${pieces.length} image pieces.`, 'success');
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to create ZIP file. Please try a smaller image.', 'error');
+      } finally {
+        setTimeout(hideProgress, 900);
+        updateSummary();
+      }
+    }
+
+    browseBtn.addEventListener('click', () => fileInput.click());
+    viewerDropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => {
+      loadFile(event.target.files[0]);
+      fileInput.value = '';
+    });
+    clearImageBtn.addEventListener('click', clearImage);
+
+    autoLinesBtn.addEventListener('click', () => {
+      if (!requireImage()) return;
+      const parts = Math.max(2, Math.min(100, Number(autoParts.value) || 2));
+      const direction = autoDirection.value;
+      const max = direction === 'h' ? naturalHeight : naturalWidth;
+      if (direction === 'h') hLines = [];
+      if (direction === 'v') vLines = [];
+      for (let i = 1; i < parts; i++) addLine(direction, max * i / parts);
+      selectedLine = null;
+      renderAll();
+      showMessage(`${parts} equal parts placed. Drag lines to adjust.`, 'success');
+    });
+
+    addHorizontalBtn.addEventListener('click', () => { if (requireImage()) setPlacing('h'); });
+    addVerticalBtn.addEventListener('click', () => { if (requireImage()) setPlacing('v'); });
+    clearLinesBtn.addEventListener('click', () => {
+      hLines = [];
+      vLines = [];
+      selectedLine = null;
+      renderAll();
+      showMessage('All cut lines cleared.', 'success');
+    });
+
+    stage.addEventListener('click', event => {
+      if (!placing || !imageLoaded || event.target.closest('.cutline')) return;
+      const rect = stage.getBoundingClientRect();
+      if (placing === 'h') addLine('h', (event.clientY - rect.top) / zoom);
+      if (placing === 'v') addLine('v', (event.clientX - rect.left) / zoom);
+      setPlacing(null);
+    });
+
+    lineList.addEventListener('change', event => {
+      const input = event.target.closest('input[data-direction]');
+      if (!input) return;
+      setLinePosition(input.dataset.direction, Number(input.dataset.id), Number(input.value));
+      renderAll();
+    });
+
+    lineList.addEventListener('click', event => {
+      const button = event.target.closest('button[data-remove-direction]');
+      if (!button) return;
+      removeLine(button.dataset.removeDirection, Number(button.dataset.removeId));
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && placing) setPlacing(null);
+      if ((event.key === 'Delete' || event.key === 'Backspace') && selectedLine && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) {
+        removeLine(selectedLine.direction, selectedLine.id);
+      }
+    });
+
+    zoomInBtn.addEventListener('click', () => { zoom = clamp(zoom * 1.25, 0.03, 8); applyZoom(); });
+    zoomOutBtn.addEventListener('click', () => { zoom = clamp(zoom / 1.25, 0.03, 8); applyZoom(); });
+    fitWidthBtn.addEventListener('click', fitWidth);
+    zoom100Btn.addEventListener('click', () => { zoom = 1; applyZoom(); });
+    downloadZipBtn.addEventListener('click', downloadZip);
+    downloadSeparateBtn.addEventListener('click', downloadSeparate);
+    formatSelect.addEventListener('change', renderPreviews);
+    qualityInput.addEventListener('input', renderPreviews);
+
+    [topDropzone, viewer].forEach(zone => {
+      ['dragenter', 'dragover'].forEach(eventName => zone.addEventListener(eventName, event => {
+        event.preventDefault();
+        viewerDropzone.classList.add('dragover');
+        topDropzone.classList.add('dragover');
+      }));
+      ['dragleave', 'drop'].forEach(eventName => zone.addEventListener(eventName, event => {
+        event.preventDefault();
+        viewerDropzone.classList.remove('dragover');
+        topDropzone.classList.remove('dragover');
+      }));
+      zone.addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+    });
+
+    window.addEventListener('resize', positionLines);
+    window.addEventListener('beforeunload', () => { if (imageUrl) URL.revokeObjectURL(imageUrl); });
+
+    clearImage();
+  </script>
+</body>
+</html>

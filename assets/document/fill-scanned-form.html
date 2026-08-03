@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fill Scanned Form - JNToolkits</title>
+  <meta name="description" content="Fill scanned forms by adding text, checkmarks, and signature images on PDF or image documents in your browser." />
+  <link rel="stylesheet" href="../css/jntoolkits.css" />
+</head>
+<body class="compact-page">
+  <header class="topbar">
+    <div class="tool-container nav">
+      <a href="../../index.html" class="brand" aria-label="JNToolkits home">
+        <span class="brand-mark">JN</span>
+        <span>JNToolkits<small>Free Online Utilities</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="../../index.html">Home</a>
+        <a href="../../index.html#tools" class="active">All Tools</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="tool-hero-wrap">
+      <div class="tool-container">
+        <div class="tool-hero">
+          <div>
+            <span class="eyebrow"><span class="pulse" aria-hidden="true"></span> Scan document filler</span>
+            <h1>Fill Scanned Form <span class="gradient-text">with text & signature.</span></h1>
+            <p>Upload a scanned PDF or image form, place text fields, add checkmarks, attach a signature photo, and download the completed form as a PDF. Everything runs locally in your browser.</p>
+            <div class="hero-badges">
+              <span class="badge">✓ PDF or image</span>
+              <span class="badge">✓ Drag fields</span>
+              <span class="badge">✓ Signature photo</span>
+              <span class="badge">✓ No upload</span>
+            </div>
+          </div>
+          <div class="hero-icon-large" aria-hidden="true">🧾</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tool-container workspace-grid">
+        <div class="panel">
+          <div class="dropzone" id="dropzone">
+            <input class="file-input" id="documentInput" type="file" accept="application/pdf,.pdf,image/jpeg,image/png,image/webp" />
+            <input class="file-input" id="signatureInput" type="file" accept="image/jpeg,image/png,image/webp" />
+            <div>
+              <div class="upload-icon">＋</div>
+              <h2>Upload scanned form</h2>
+              <p>Choose a PDF, JPG, PNG, or WebP scanned form. Then add text fields and signature photo on top of the document.</p>
+              <div class="button-row">
+                <button class="btn btn-primary" id="chooseDocumentBtn" type="button">Choose Document</button>
+                <button class="btn btn-soft" id="clearBtn" type="button" disabled>Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-head">
+            <div>
+              <h2>Selected document</h2>
+              <span>Supports scanned PDF or image files.</span>
+            </div>
+          </div>
+          <div class="file-list" id="fileList">
+            <div class="empty-list">No document selected yet.</div>
+          </div>
+
+          <div class="editor-layout">
+            <div>
+              <div class="arrange-toolbar">
+                <div>
+                  <h2>Form preview</h2>
+                  <span>Drag text/signature boxes to position them. Use the blue handle to resize.</span>
+                </div>
+                <div class="button-row arrange-actions">
+                  <button class="btn btn-soft" id="prevPageBtn" type="button" disabled>← Prev</button>
+                  <select class="select page-select" id="pageSelect" disabled></select>
+                  <button class="btn btn-soft" id="nextPageBtn" type="button" disabled>Next →</button>
+                </div>
+              </div>
+
+              <div class="editor-stage" id="editorStage">
+                <div class="editor-empty">Upload a scanned form to start filling.</div>
+              </div>
+            </div>
+
+            <div class="editor-sidebar">
+              <div class="editor-mini-card">
+                <h3>Add items</h3>
+                <div class="action-stack">
+                  <button class="btn btn-primary" id="addTextBtn" type="button" disabled>Add Text Field</button>
+                  <button class="btn btn-soft" id="addCheckBtn" type="button" disabled>Add Checkmark</button>
+                  <button class="btn btn-soft" id="addSignatureBtn" type="button" disabled>Upload Signature</button>
+                </div>
+              </div>
+
+              <div class="editor-mini-card">
+                <h3>Selected item</h3>
+                <div class="form-field field-spaced">
+                  <label for="textValue">Text</label>
+                  <textarea class="textarea" id="textValue" placeholder="Type text to place on form">Your text</textarea>
+                </div>
+                <div class="form-grid compact-two-grid">
+                  <div class="form-field">
+                    <label for="fontSizeValue">Size</label>
+                    <input class="input" id="fontSizeValue" type="number" min="8" max="96" value="18" />
+                  </div>
+                  <div class="form-field">
+                    <label for="colorValue">Color</label>
+                    <input class="input" id="colorValue" type="color" value="#0f172a" />
+                  </div>
+                </div>
+                <div class="action-stack">
+                  <button class="btn btn-soft" id="applyStyleBtn" type="button" disabled>Apply to Selected</button>
+                  <button class="btn btn-danger" id="deleteSelectedBtn" type="button" disabled>Delete Selected</button>
+                </div>
+              </div>
+
+              <div class="editor-mini-card">
+                <h3>Objects on page</h3>
+                <div class="object-list" id="objectList">
+                  <div class="empty-list">No items added.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-wrap" id="progressWrap" aria-live="polite">
+            <div class="progress-label"><span id="progressText">Preparing...</span><span id="progressPercent">0%</span></div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+          <div class="message" id="messageBox"></div>
+        </div>
+
+        <aside>
+          <div class="side-card">
+            <h2>Fill summary</h2>
+            <p>Add text, checkmarks, and signature images on scanned forms.</p>
+            <div class="summary">
+              <div class="summary-box"><strong id="pageCount">0</strong><span>Pages</span></div>
+              <div class="summary-box"><strong id="objectCount">0</strong><span>Items added</span></div>
+            </div>
+            <div class="summary">
+              <div class="summary-box"><strong id="fileSize">0 B</strong><span>File size</span></div>
+              <div class="summary-box"><strong id="currentPageLabel">—</strong><span>Current page</span></div>
+            </div>
+            <div class="action-stack">
+              <button class="btn btn-primary" id="downloadBtn" type="button" disabled>Download Filled PDF</button>
+              <button class="btn btn-soft" id="downloadAgainBtn" type="button" disabled>Download Again</button>
+            </div>
+            <div class="tips">
+              <div class="tip"><b>Text.</b> Add text field, type value, then drag it to the form field.</div>
+              <div class="tip"><b>Signature.</b> Upload a signature photo and resize it with the blue handle.</div>
+              <div class="tip"><b>Download.</b> The result is exported as a filled PDF.</div>
+            </div>
+          </div>
+
+          <div class="side-card"><h2>Privacy note</h2><p>Your scanned document and signature stay in your browser. They are not uploaded to a server.</p></div>
+          <div class="side-card"><div class="ad-slot"><div><strong>Advertisement Space</strong><p>Future Google AdSense placement.</p></div></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="tool-container footer-inner">
+      <span><strong>JNToolkits</strong> © <span id="year"></span> — Fill Scanned Form Tool.</span>
+      <span>Browser-based • Free • No signup</span>
+    </div>
+  </footer>
+
+  <script src="../js/pdf-lib.min.js"></script>
+  <script src="../js/pdfjs.min.js"></script>
+  <script>
+    const documentInput = document.getElementById('documentInput');
+    const signatureInput = document.getElementById('signatureInput');
+    const chooseDocumentBtn = document.getElementById('chooseDocumentBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const dropzone = document.getElementById('dropzone');
+    const fileList = document.getElementById('fileList');
+    const editorStage = document.getElementById('editorStage');
+    const pageSelect = document.getElementById('pageSelect');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const addTextBtn = document.getElementById('addTextBtn');
+    const addCheckBtn = document.getElementById('addCheckBtn');
+    const addSignatureBtn = document.getElementById('addSignatureBtn');
+    const textValue = document.getElementById('textValue');
+    const fontSizeValue = document.getElementById('fontSizeValue');
+    const colorValue = document.getElementById('colorValue');
+    const applyStyleBtn = document.getElementById('applyStyleBtn');
+    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+    const objectList = document.getElementById('objectList');
+    const pageCount = document.getElementById('pageCount');
+    const objectCount = document.getElementById('objectCount');
+    const fileSize = document.getElementById('fileSize');
+    const currentPageLabel = document.getElementById('currentPageLabel');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadAgainBtn = document.getElementById('downloadAgainBtn');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const messageBox = document.getElementById('messageBox');
+
+    let documentFile = null;
+    let pdfPreviewDoc = null;
+    let imageSource = null;
+    let currentPage = 1;
+    let currentCanvas = null;
+    let currentOverlay = null;
+    let objects = {};
+    let selectedId = null;
+    let pointerState = null;
+    let lastBlobUrl = null;
+    let lastFileName = 'filled-scanned-form.pdf';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function fileBaseName(fileName, fallback = 'file') {
+      return (fileName || fallback)
+        .split(/[\/]/).pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[\/:*?"<>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim() || fallback;
+    }
+
+    function outputFileName(fileName, suffix, extension) {
+      return `${fileBaseName(fileName)}-${suffix}.${extension}`;
+    }
+    if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = '../js/pdfjs.worker.min.js';
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      const value = bytes / Math.pow(1024, index);
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = `message ${type}`;
+    }
+
+    function hideMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message';
+    }
+
+    function setProgress(percent, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressWrap.style.display = 'block';
+      progressBar.style.width = `${safePercent}%`;
+      progressPercent.textContent = `${safePercent}%`;
+      progressText.textContent = text;
+    }
+
+    function hideProgress() {
+      progressWrap.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0%';
+    }
+
+    function resetDownload() {
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+      lastBlobUrl = null;
+      downloadAgainBtn.disabled = true;
+    }
+
+    function pageObjects(page = currentPage) {
+      objects[page] = objects[page] || [];
+      return objects[page];
+    }
+
+    function allObjectCount() {
+      return Object.values(objects).reduce((sum, list) => sum + list.length, 0);
+    }
+
+    function selectedObject() {
+      return pageObjects().find(item => item.id === selectedId) || null;
+    }
+
+    function updateSummary() {
+      const hasDoc = Boolean(documentFile);
+      pageCount.textContent = hasDoc ? documentFile.pages : 0;
+      objectCount.textContent = allObjectCount();
+      fileSize.textContent = hasDoc ? formatBytes(documentFile.size) : '0 B';
+      currentPageLabel.textContent = hasDoc ? `${currentPage}/${documentFile.pages}` : '—';
+      clearBtn.disabled = !hasDoc;
+      pageSelect.disabled = !hasDoc || documentFile.pages <= 1;
+      prevPageBtn.disabled = !hasDoc || currentPage <= 1;
+      nextPageBtn.disabled = !hasDoc || currentPage >= (documentFile ? documentFile.pages : 1);
+      addTextBtn.disabled = !hasDoc;
+      addCheckBtn.disabled = !hasDoc;
+      addSignatureBtn.disabled = !hasDoc;
+      downloadBtn.disabled = !hasDoc || allObjectCount() === 0;
+      applyStyleBtn.disabled = !selectedObject();
+      deleteSelectedBtn.disabled = !selectedObject();
+    }
+
+    function renderFile() {
+      if (!documentFile) {
+        fileList.innerHTML = '<div class="empty-list">No document selected yet.</div>';
+        updateSummary();
+        return;
+      }
+
+      fileList.innerHTML = `
+        <div class="file-item">
+          <div class="file-icon">${documentFile.kind === 'pdf' ? 'PDF' : 'IMG'}</div>
+          <div>
+            <div class="file-name">${escapeHtml(documentFile.name)}</div>
+            <div class="file-meta"><span class="meta-pill">✓ ${documentFile.pages} page${documentFile.pages === 1 ? '' : 's'}</span><span class="meta-pill">${formatBytes(documentFile.size)}</span></div>
+          </div>
+          <div class="file-actions"><button class="icon-btn remove" type="button" id="removeFileBtn" aria-label="Remove file">×</button></div>
+        </div>`;
+      document.getElementById('removeFileBtn').addEventListener('click', clearDocument);
+      updateSummary();
+    }
+
+    function populatePageSelect() {
+      pageSelect.innerHTML = '';
+      if (!documentFile) return;
+      for (let i = 1; i <= documentFile.pages; i++) {
+        const option = document.createElement('option');
+        option.value = String(i);
+        option.textContent = `Page ${i}`;
+        pageSelect.appendChild(option);
+      }
+      pageSelect.value = String(currentPage);
+    }
+
+    async function loadDocument(file) {
+      hideMessage();
+      hideProgress();
+      resetDownload();
+      if (!file) return;
+      const isPdf = file.type.includes('pdf') || file.name.toLowerCase().endsWith('.pdf');
+      const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp)$/i.test(file.name);
+      if (!isPdf && !isImage) {
+        showMessage('Please select a PDF, JPG, PNG, or WebP file.', 'error');
+        return;
+      }
+
+      try {
+        setProgress(12, 'Reading document...');
+        const bytes = await file.arrayBuffer();
+        currentPage = 1;
+        objects = {};
+        selectedId = null;
+        imageSource = null;
+        pdfPreviewDoc = null;
+
+        if (isPdf) {
+          const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(bytes.slice(0)) });
+          pdfPreviewDoc = await loadingTask.promise;
+          documentFile = { name: file.name, size: file.size, bytes, pages: pdfPreviewDoc.numPages, kind: 'pdf', mime: file.type };
+        } else {
+          const dataUrl = await fileToDataUrl(file);
+          imageSource = await loadImage(dataUrl);
+          documentFile = { name: file.name, size: file.size, bytes, pages: 1, kind: 'image', mime: file.type, dataUrl };
+        }
+
+        populatePageSelect();
+        renderFile();
+        setProgress(65, 'Rendering preview...');
+        await renderCurrentPage();
+        setProgress(100, 'Document ready.');
+        showMessage('Document loaded. Add text fields, checkmarks, or signature photo.', 'success');
+        setTimeout(hideProgress, 700);
+      } catch (error) {
+        console.error(error);
+        clearDocument();
+        showMessage('Could not read this file. Please try another PDF or image.', 'error');
+      }
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    async function renderCurrentPage() {
+      if (!documentFile) return;
+      editorStage.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'editor-page-wrap';
+      const canvas = document.createElement('canvas');
+      const overlay = document.createElement('div');
+      overlay.className = 'editor-overlay';
+
+      if (documentFile.kind === 'pdf') {
+        const page = await pdfPreviewDoc.getPage(currentPage);
+        const viewport = page.getViewport({ scale: 1.45 });
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        wrap.style.width = `${canvas.width}px`;
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      } else {
+        const maxWidth = 980;
+        const scale = Math.min(1, maxWidth / imageSource.naturalWidth);
+        canvas.width = Math.round(imageSource.naturalWidth * scale);
+        canvas.height = Math.round(imageSource.naturalHeight * scale);
+        wrap.style.width = `${canvas.width}px`;
+        canvas.getContext('2d').drawImage(imageSource, 0, 0, canvas.width, canvas.height);
+      }
+
+      wrap.appendChild(canvas);
+      wrap.appendChild(overlay);
+      editorStage.appendChild(wrap);
+      currentCanvas = canvas;
+      currentOverlay = overlay;
+      currentOverlay.addEventListener('pointerdown', event => {
+        if (event.target === currentOverlay) {
+          selectedId = null;
+          renderObjects();
+        }
+      });
+      renderObjects();
+      updateSummary();
+    }
+
+    function renderObjects() {
+      if (!currentOverlay || !currentCanvas) return;
+      currentOverlay.innerHTML = '';
+      pageObjects().forEach((item, index) => {
+        const box = document.createElement('div');
+        box.className = `fill-object ${item.id === selectedId ? 'selected' : ''}`;
+        box.dataset.id = item.id;
+        box.style.left = `${item.x * 100}%`;
+        box.style.top = `${item.y * 100}%`;
+        box.style.width = `${item.w * 100}%`;
+        box.style.height = `${item.h * 100}%`;
+
+        if (item.type === 'text') {
+          const text = document.createElement('div');
+          text.className = 'fill-text';
+          text.textContent = item.text;
+          text.style.color = item.color;
+          text.style.fontSize = `${Math.max(8, item.fontRatio * currentCanvas.width)}px`;
+          box.appendChild(text);
+        }
+
+        if (item.type === 'check') {
+          const check = document.createElement('div');
+          check.className = 'fill-check';
+          check.textContent = '✓';
+          check.style.color = item.color;
+          check.style.fontSize = `${Math.max(12, item.fontRatio * currentCanvas.width)}px`;
+          box.appendChild(check);
+        }
+
+        if (item.type === 'signature') {
+          const img = document.createElement('img');
+          img.className = 'fill-signature';
+          img.src = item.src;
+          img.alt = 'Signature';
+          box.appendChild(img);
+        }
+
+        const handle = document.createElement('span');
+        handle.className = 'resize-handle';
+        handle.dataset.handle = 'resize';
+        box.appendChild(handle);
+        box.addEventListener('pointerdown', startObjectPointer);
+        currentOverlay.appendChild(box);
+      });
+      renderObjectList();
+      syncSelectedControls();
+      updateSummary();
+    }
+
+    function renderObjectList() {
+      const list = pageObjects();
+      if (!list.length) {
+        objectList.innerHTML = '<div class="empty-list">No items added.</div>';
+        return;
+      }
+      objectList.innerHTML = list.map((item, index) => {
+        const label = item.type === 'signature' ? 'Signature image' : item.type === 'check' ? 'Checkmark' : item.text.slice(0, 28) || 'Text field';
+        return `<button class="btn ${item.id === selectedId ? 'btn-primary' : 'btn-soft'}" type="button" data-id="${item.id}">${index + 1}. ${escapeHtml(label)}</button>`;
+      }).join('');
+    }
+
+    function syncSelectedControls() {
+      const item = selectedObject();
+      if (!item) {
+        applyStyleBtn.disabled = true;
+        deleteSelectedBtn.disabled = true;
+        return;
+      }
+      applyStyleBtn.disabled = false;
+      deleteSelectedBtn.disabled = false;
+      if (item.type === 'text') textValue.value = item.text;
+      if (item.type === 'check') textValue.value = '✓';
+      if (item.type === 'text' || item.type === 'check') {
+        fontSizeValue.value = Math.round(item.fontRatio * currentCanvas.width);
+        colorValue.value = item.color;
+      }
+    }
+
+    function startObjectPointer(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const box = event.currentTarget;
+      const item = pageObjects().find(object => object.id === box.dataset.id);
+      if (!item || !currentOverlay) return;
+      selectedId = item.id;
+      const rect = currentOverlay.getBoundingClientRect();
+      pointerState = {
+        id: item.id,
+        mode: event.target.dataset.handle === 'resize' ? 'resize' : 'drag',
+        startX: event.clientX,
+        startY: event.clientY,
+        rect,
+        original: { x: item.x, y: item.y, w: item.w, h: item.h }
+      };
+      box.setPointerCapture(event.pointerId);
+      window.addEventListener('pointermove', objectPointerMove);
+      window.addEventListener('pointerup', objectPointerUp, { once: true });
+      renderObjects();
+    }
+
+    function objectPointerMove(event) {
+      if (!pointerState) return;
+      const item = pageObjects().find(object => object.id === pointerState.id);
+      if (!item) return;
+      const dx = (event.clientX - pointerState.startX) / pointerState.rect.width;
+      const dy = (event.clientY - pointerState.startY) / pointerState.rect.height;
+
+      if (pointerState.mode === 'drag') {
+        item.x = Math.max(0, Math.min(1 - item.w, pointerState.original.x + dx));
+        item.y = Math.max(0, Math.min(1 - item.h, pointerState.original.y + dy));
+      } else {
+        item.w = Math.max(0.035, Math.min(1 - item.x, pointerState.original.w + dx));
+        item.h = Math.max(0.025, Math.min(1 - item.y, pointerState.original.h + dy));
+      }
+      resetDownload();
+      renderObjects();
+    }
+
+    function objectPointerUp() {
+      window.removeEventListener('pointermove', objectPointerMove);
+      pointerState = null;
+    }
+
+    function addTextField() {
+      if (!documentFile || !currentCanvas) return;
+      const size = Math.max(8, Number(fontSizeValue.value) || 18);
+      const item = {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        type: 'text',
+        x: 0.16,
+        y: 0.16,
+        w: 0.32,
+        h: 0.07,
+        text: textValue.value || 'Your text',
+        color: colorValue.value,
+        fontRatio: size / currentCanvas.width
+      };
+      pageObjects().push(item);
+      selectedId = item.id;
+      resetDownload();
+      renderObjects();
+      showMessage('Text field added. Drag it to the correct place.', 'success');
+    }
+
+    function addCheckmark() {
+      if (!documentFile || !currentCanvas) return;
+      const size = Math.max(14, Number(fontSizeValue.value) || 26);
+      const item = {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        type: 'check',
+        x: 0.18,
+        y: 0.22,
+        w: 0.06,
+        h: 0.055,
+        color: colorValue.value,
+        fontRatio: size / currentCanvas.width
+      };
+      pageObjects().push(item);
+      selectedId = item.id;
+      resetDownload();
+      renderObjects();
+      showMessage('Checkmark added. Drag it to the checkbox.', 'success');
+    }
+
+    async function addSignature(file) {
+      if (!documentFile || !file) return;
+      if (!file.type.startsWith('image/')) {
+        showMessage('Please choose a signature image file.', 'error');
+        return;
+      }
+      const src = await fileToDataUrl(file);
+      const item = {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        type: 'signature',
+        x: 0.34,
+        y: 0.68,
+        w: 0.28,
+        h: 0.12,
+        src
+      };
+      pageObjects().push(item);
+      selectedId = item.id;
+      resetDownload();
+      renderObjects();
+      showMessage('Signature added. Drag and resize it as needed.', 'success');
+    }
+
+    function applyStyleToSelected() {
+      const item = selectedObject();
+      if (!item || !currentCanvas) return;
+      if (item.type === 'text') item.text = textValue.value || '';
+      if (item.type === 'text' || item.type === 'check') {
+        item.color = colorValue.value;
+        item.fontRatio = Math.max(8, Number(fontSizeValue.value) || 18) / currentCanvas.width;
+      }
+      resetDownload();
+      renderObjects();
+      showMessage('Selected item updated.', 'success');
+    }
+
+    function deleteSelected() {
+      if (!selectedId) return;
+      objects[currentPage] = pageObjects().filter(item => item.id !== selectedId);
+      selectedId = null;
+      resetDownload();
+      renderObjects();
+      showMessage('Selected item deleted.', 'success');
+    }
+
+    async function goToPage(pageNumber) {
+      if (!documentFile) return;
+      currentPage = Math.max(1, Math.min(documentFile.pages, pageNumber));
+      selectedId = null;
+      pageSelect.value = String(currentPage);
+      setProgress(35, `Rendering page ${currentPage}...`);
+      await renderCurrentPage();
+      hideProgress();
+    }
+
+    function clearDocument() {
+      documentFile = null;
+      pdfPreviewDoc = null;
+      imageSource = null;
+      currentPage = 1;
+      currentCanvas = null;
+      currentOverlay = null;
+      objects = {};
+      selectedId = null;
+      pointerState = null;
+      documentInput.value = '';
+      signatureInput.value = '';
+      pageSelect.innerHTML = '';
+      resetDownload();
+      hideMessage();
+      hideProgress();
+      fileList.innerHTML = '<div class="empty-list">No document selected yet.</div>';
+      objectList.innerHTML = '<div class="empty-list">No items added.</div>';
+      editorStage.innerHTML = '<div class="editor-empty">Upload a scanned form to start filling.</div>';
+      updateSummary();
+    }
+
+    async function renderBasePageToCanvas(pageNumber) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (documentFile.kind === 'pdf') {
+        const page = await pdfPreviewDoc.getPage(pageNumber);
+        const viewport = page.getViewport({ scale: 2 });
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        await page.render({ canvasContext: context, viewport }).promise;
+      } else {
+        const maxOutputWidth = 1800;
+        const scale = Math.min(1, maxOutputWidth / imageSource.naturalWidth);
+        canvas.width = Math.round(imageSource.naturalWidth * scale);
+        canvas.height = Math.round(imageSource.naturalHeight * scale);
+        context.drawImage(imageSource, 0, 0, canvas.width, canvas.height);
+      }
+      return canvas;
+    }
+
+    function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+      const paragraphs = String(text).split('\n');
+      let currentY = y;
+      paragraphs.forEach(paragraph => {
+        const words = paragraph.split(/\s+/).filter(Boolean);
+        let line = '';
+        if (!words.length) {
+          currentY += lineHeight;
+          return;
+        }
+        words.forEach(word => {
+          const testLine = line ? `${line} ${word}` : word;
+          if (ctx.measureText(testLine).width > maxWidth && line) {
+            ctx.fillText(line, x, currentY);
+            line = word;
+            currentY += lineHeight;
+          } else {
+            line = testLine;
+          }
+        });
+        if (line) {
+          ctx.fillText(line, x, currentY);
+          currentY += lineHeight;
+        }
+      });
+    }
+
+    async function drawObjectsOnCanvas(canvas, pageNumber) {
+      const ctx = canvas.getContext('2d');
+      const list = objects[pageNumber] || [];
+      for (const item of list) {
+        const x = item.x * canvas.width;
+        const y = item.y * canvas.height;
+        const w = item.w * canvas.width;
+        const h = item.h * canvas.height;
+
+        if (item.type === 'text') {
+          const fontSize = Math.max(8, item.fontRatio * canvas.width);
+          ctx.fillStyle = item.color;
+          ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+          ctx.textBaseline = 'top';
+          drawWrappedText(ctx, item.text, x, y, w, fontSize * 1.2);
+        }
+
+        if (item.type === 'check') {
+          const fontSize = Math.max(12, item.fontRatio * canvas.width);
+          ctx.fillStyle = item.color;
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✓', x + w / 2, y + h / 2);
+          ctx.textAlign = 'left';
+        }
+
+        if (item.type === 'signature') {
+          const img = await loadImage(item.src);
+          ctx.drawImage(img, x, y, w, h);
+        }
+      }
+    }
+
+    function dataUrlToUint8Array(dataUrl) {
+      const base64 = dataUrl.split(',')[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    async function downloadFilledPdf() {
+      hideMessage();
+      resetDownload();
+      if (!documentFile || allObjectCount() === 0) {
+        showMessage('Add at least one text, checkmark, or signature item first.', 'error');
+        return;
+      }
+
+      try {
+        downloadBtn.disabled = true;
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        for (let pageNumber = 1; pageNumber <= documentFile.pages; pageNumber++) {
+          setProgress(8 + ((pageNumber - 1) / documentFile.pages) * 78, `Preparing page ${pageNumber} of ${documentFile.pages}...`);
+          const canvas = await renderBasePageToCanvas(pageNumber);
+          await drawObjectsOnCanvas(canvas, pageNumber);
+          const jpgBytes = dataUrlToUint8Array(canvas.toDataURL('image/jpeg', 0.92));
+          const image = await pdfDoc.embedJpg(jpgBytes);
+          const page = pdfDoc.addPage([canvas.width, canvas.height]);
+          page.drawImage(image, { x: 0, y: 0, width: canvas.width, height: canvas.height });
+        }
+        setProgress(92, 'Saving filled PDF...');
+        const pdfBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+        lastBlobUrl = URL.createObjectURL(new Blob([pdfBytes], { type: 'application/pdf' }));
+        lastFileName = outputFileName(documentFile.name, 'filled', 'pdf');
+        downloadBlob(lastBlobUrl, lastFileName);
+        downloadAgainBtn.disabled = false;
+        setProgress(100, 'Done! Download starting...');
+        showMessage(`Success! Filled form downloaded with ${allObjectCount()} item${allObjectCount() === 1 ? '' : 's'}.`, 'success');
+      } catch (error) {
+        console.error(error);
+        showMessage('Unable to create the filled PDF. Please try a smaller document or image.', 'error');
+      } finally {
+        setTimeout(hideProgress, 900);
+        updateSummary();
+      }
+    }
+
+    function downloadBlob(url, fileName) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    chooseDocumentBtn.addEventListener('click', () => documentInput.click());
+    documentInput.addEventListener('change', event => {
+      loadDocument(event.target.files[0]);
+      documentInput.value = '';
+    });
+    clearBtn.addEventListener('click', clearDocument);
+    prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
+    nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
+    pageSelect.addEventListener('change', () => goToPage(Number(pageSelect.value)));
+    addTextBtn.addEventListener('click', addTextField);
+    addCheckBtn.addEventListener('click', addCheckmark);
+    addSignatureBtn.addEventListener('click', () => signatureInput.click());
+    signatureInput.addEventListener('change', event => {
+      addSignature(event.target.files[0]);
+      signatureInput.value = '';
+    });
+    applyStyleBtn.addEventListener('click', applyStyleToSelected);
+    deleteSelectedBtn.addEventListener('click', deleteSelected);
+    downloadBtn.addEventListener('click', downloadFilledPdf);
+    downloadAgainBtn.addEventListener('click', () => { if (lastBlobUrl) downloadBlob(lastBlobUrl, lastFileName); });
+    objectList.addEventListener('click', event => {
+      const button = event.target.closest('button[data-id]');
+      if (!button) return;
+      selectedId = button.dataset.id;
+      renderObjects();
+    });
+
+    [textValue, fontSizeValue, colorValue].forEach(input => {
+      input.addEventListener('input', () => {
+        const item = selectedObject();
+        if (!item || !currentCanvas) return;
+        if (item.type === 'text') item.text = textValue.value;
+        if (item.type === 'text' || item.type === 'check') {
+          item.color = colorValue.value;
+          item.fontRatio = Math.max(8, Number(fontSizeValue.value) || 18) / currentCanvas.width;
+        }
+        resetDownload();
+        renderObjects();
+      });
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', event => loadDocument(event.dataTransfer.files[0]));
+    window.addEventListener('beforeunload', () => { if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl); });
+
+    clearDocument();
+  </script>
+</body>
+</html>
